@@ -37,6 +37,173 @@
   </div>
 
   <!-- ======================================================================
+       Question / Challenge Overlay (Audience Hook & Problem Statement)
+       ====================================================================== -->
+  <div id="question-overlay" class="hidden">
+    <div class="question-backdrop-glow"></div>
+    <div class="question-container">
+      <!-- Top header bar / Badge -->
+      <div class="question-header">
+        <div class="question-badge">
+          <span class="badge-pulse"></span>
+          <span>🏭 INDUSTRIAL OPTIMIZATION • AUDIENCE CHALLENGE</span>
+        </div>
+        <button id="question-back-btn" class="question-back-btn" title="Back to Intro Screen">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span>Back to Intro</span>
+        </button>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="question-title">The Craftsman's Factory Dilemma</h1>
+      <p class="question-subtitle">
+        A custom furniture workshop needs to schedule production for maximum profit.
+        Every desk and chair consumes precious raw timber and skilled artisan labor.
+      </p>
+
+      <!-- Visual Product Showcase & Resource Limits Grid -->
+      <div class="question-grid">
+        <!-- Product A: Desks -->
+        <div class="challenge-card product-desk">
+          <div class="card-glow"></div>
+          <div class="card-icon-wrap">
+            <span class="product-emoji">🪑</span>
+            <span class="card-var-badge">Variable x₁</span>
+          </div>
+          <h3 class="card-product-name">Executive Desk</h3>
+          <div class="card-profit">
+            <span class="profit-val">+$200</span>
+            <span class="profit-lbl">Profit per desk</span>
+          </div>
+          <div class="card-requirements">
+            <div class="req-row">
+              <span class="req-dot wood"></span>
+              <span class="req-label">Raw Wood:</span>
+              <strong class="req-val">2 Units</strong>
+            </div>
+            <div class="req-row">
+              <span class="req-dot labor"></span>
+              <span class="req-label">Labor Time:</span>
+              <strong class="req-val">1 Hour</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product B: Chairs -->
+        <div class="challenge-card product-chair">
+          <div class="card-glow"></div>
+          <div class="card-icon-wrap">
+            <span class="product-emoji">🛋️</span>
+            <span class="card-var-badge">Variable x₂</span>
+          </div>
+          <h3 class="card-product-name">Ergonomic Chair</h3>
+          <div class="card-profit">
+            <span class="profit-val">+$300</span>
+            <span class="profit-lbl">Profit per chair</span>
+          </div>
+          <div class="card-requirements">
+            <div class="req-row">
+              <span class="req-dot wood"></span>
+              <span class="req-label">Raw Wood:</span>
+              <strong class="req-val">1 Unit</strong>
+            </div>
+            <div class="req-row">
+              <span class="req-dot labor"></span>
+              <span class="req-label">Labor Time:</span>
+              <strong class="req-val">2 Hours</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Workshop Resources & Constraints Card -->
+        <div class="challenge-card workshop-limits">
+          <div class="card-glow"></div>
+          <div class="card-icon-wrap">
+            <span class="product-emoji">⚙️</span>
+            <span class="card-var-badge limits">Factory Ceilings</span>
+          </div>
+          <h3 class="card-product-name">Resource Ceilings</h3>
+          <div class="card-limits-list">
+            <div class="limit-box wood-box">
+              <div class="limit-box-header">
+                <span class="limit-title">🌲 Total Raw Lumber</span>
+                <span class="limit-badge">Max 5 Units</span>
+              </div>
+              <div class="limit-formula">2x₁ + 1x₂ ≤ 5</div>
+            </div>
+            <div class="limit-box labor-box">
+              <div class="limit-box-header">
+                <span class="limit-title">⏱️ Artisan Assembly</span>
+                <span class="limit-badge">Max 5 Hours</span>
+              </div>
+              <div class="limit-formula">1x₁ + 2x₂ ≤ 5</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- The Core Dilemma / Audience Hook Box -->
+      <div class="audience-challenge-box">
+        <div class="dilemma-header">
+          <div class="dilemma-tag">
+            <span class="pulse-icon">⚡</span>
+            <span>THE CORE QUESTION FOR THE AUDIENCE</span>
+          </div>
+          <div class="objective-formula">
+            <span class="obj-lbl">Target:</span>
+            <strong class="obj-math">Maximize Profit Z = 200x₁ + 300x₂</strong>
+          </div>
+        </div>
+        
+        <p class="challenge-prompt">
+          How many <strong>Desks (x₁)</strong> and <strong>Chairs (x₂)</strong> should we manufacture to maximize profit without violating raw lumber supply or artisan labor hours?
+        </p>
+
+        <div class="dilemma-twist-grid">
+          <div class="twist-col math-reality">
+            <div class="twist-badge error">⚠️ The Continuous LP Trap</div>
+            <p>
+              Standard continuous Simplex yields:
+              <br>
+              <strong>x₁ = 1.67 Desks, x₂ = 1.67 Chairs → Profit = $833.33</strong>
+            </p>
+          </div>
+          <div class="twist-arrow">VS</div>
+          <div class="twist-col physical-reality">
+            <div class="twist-badge success">🔨 Real-World Physical Reality</div>
+            <p>
+              <strong>You cannot sell 0.67 of a chair!</strong>
+              <br>
+              Production must be whole units: <strong>x₁, x₂ ∈ {0, 1, 2, ...}</strong>
+            </p>
+          </div>
+        </div>
+
+        <div class="question-callout">
+          Blindly rounding down to <strong>(1, 1)</strong> yields only <strong>$500</strong> — throwing away <strong>$333</strong>!
+          <em>Can cutting planes mathematically slice off the impossible fractions to unveil the true integer solution?</em>
+        </div>
+      </div>
+
+      <!-- Call to Action Footer -->
+      <div class="question-action-bar">
+        <button id="solve-problem-btn" class="solve-btn">
+          <span class="solve-btn-glow"></span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span>SOLVE PROBLEM</span>
+        </button>
+        <div class="solve-hint">
+          Click or press <kbd>Enter</kbd> / <kbd>Space</kbd> to enter 3D Geometric Solver
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
        Main Presentation Application Layout
        ====================================================================== -->
   <div id="app">

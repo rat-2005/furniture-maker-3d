@@ -22,6 +22,9 @@ class PresentationApp {
   initDOM() {
     this.splashOverlay = document.getElementById('splash-overlay');
     this.startBtn = document.getElementById('start-presentation-btn');
+    this.questionOverlay = document.getElementById('question-overlay');
+    this.solveProblemBtn = document.getElementById('solve-problem-btn');
+    this.questionBackBtn = document.getElementById('question-back-btn');
     this.ineqGraphBtn = document.getElementById('ineq-graph-btn');
     this.tabSimplex = document.getElementById('tab-simplex');
     this.tabGomory = document.getElementById('tab-gomory');
@@ -100,13 +103,43 @@ class PresentationApp {
   }
 
   bindEvents() {
-    // Start presentation & enter fullscreen
+    // Start presentation & show audience question challenge
     this.startBtn.addEventListener('click', () => {
       sound.init();
       sound.playClick();
       this.enterFullscreen();
       this.splashOverlay.classList.add('hidden');
+      if (this.questionOverlay) {
+        this.questionOverlay.classList.remove('hidden');
+      }
     });
+
+    // Solve problem -> Proceed into main 3D simulation
+    if (this.solveProblemBtn) {
+      this.solveProblemBtn.addEventListener('click', () => {
+        sound.init();
+        sound.playOptimalChime();
+        if (this.questionOverlay) {
+          this.questionOverlay.classList.add('hidden');
+        }
+        if (this.sceneManager) {
+          this.sceneManager.onWindowResize();
+        }
+      });
+    }
+
+    // Return to intro splash from question challenge
+    if (this.questionBackBtn) {
+      this.questionBackBtn.addEventListener('click', () => {
+        sound.playClick();
+        if (this.questionOverlay) {
+          this.questionOverlay.classList.add('hidden');
+        }
+        if (this.splashOverlay) {
+          this.splashOverlay.classList.remove('hidden');
+        }
+      });
+    }
 
     // Tab mode buttons
     this.tabSimplex.addEventListener('click', () => this.switchMode('simplex'));
@@ -210,6 +243,27 @@ class PresentationApp {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
       const key = e.key.toLowerCase();
+
+      // If splash overlay is currently visible
+      if (this.splashOverlay && !this.splashOverlay.classList.contains('hidden')) {
+        if (key === 'enter' || key === ' ') {
+          e.preventDefault();
+          this.startBtn.click();
+        }
+        return;
+      }
+
+      // If question challenge overlay is currently visible
+      if (this.questionOverlay && !this.questionOverlay.classList.contains('hidden')) {
+        if (key === 'enter' || key === ' ') {
+          e.preventDefault();
+          if (this.solveProblemBtn) this.solveProblemBtn.click();
+        } else if (key === 'escape' || key === 'backspace') {
+          e.preventDefault();
+          if (this.questionBackBtn) this.questionBackBtn.click();
+        }
+        return;
+      }
 
       if (key === '1' || key === 's') {
         this.switchMode('simplex');
