@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Furniture Maker: Simplex & Gomory Cutting Plane 3D Presentation</title>
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+  <!-- ======================================================================
+       Splash Landing / Fullscreen Trigger
+       ====================================================================== -->
+  <div id="splash-overlay">
+    <div class="splash-content">
+      <div class="splash-badge">Operations Research 3D Presentation</div>
+      <h1 class="splash-title">Furniture Maker Optimization</h1>
+      <p class="splash-subtitle">
+        Interactive 3D Geometric Analysis: <strong>Simplex Method (Continuous LP)</strong> vs. 
+        <strong>Gomory's Cutting Plane Method (Integer LP)</strong> with Unity Engine Visuals.
+      </p>
+      
+      <button id="start-presentation-btn" class="splash-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        <span>START PRESENTATION</span>
+      </button>
+
+      <div class="splash-hotkeys-hint">
+        <span>Hotkeys: <kbd>1</kbd> Simplex</span>
+        <span><kbd>2</kbd> Gomory</span>
+        <span><kbd>→</kbd> Next Step</span>
+        <span><kbd>←</kbd> Prev Step</span>
+        <span><kbd>F</kbd> Fullscreen</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       Main Presentation Application Layout
+       ====================================================================== -->
+  <div id="app">
+    <!-- Top Navigation & Controls Bar -->
+    <header class="top-nav">
+      <div class="nav-left">
+        <div class="logo-badge">
+          <span style="color: var(--accent-cyan);">⚡</span>
+          <span>FURNITURE MAKER</span>
+          <span class="logo-tag">3D OPTIMIZER</span>
+        </div>
+
+        <!-- Method Switcher Tabs -->
+        <div class="mode-tabs">
+          <button id="tab-simplex" class="mode-tab active" data-mode="simplex">
+            <span>Simplex Method (Continuous)</span>
+            <kbd>1</kbd>
+          </button>
+          <button id="tab-gomory" class="mode-tab" data-mode="gomory">
+            <span>Gomory's Cutting Plane (ILP)</span>
+            <kbd>2</kbd>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step Progression Controls -->
+      <div class="nav-center">
+        <button id="prev-step-btn" class="step-btn" title="Previous Step (Left Arrow)" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+
+        <div class="step-counter" id="step-counter-text">Step 1 / 8</div>
+
+        <div class="step-progress-bar">
+          <div class="step-progress-fill" id="step-progress-fill"></div>
+        </div>
+
+        <button id="next-step-btn" class="step-btn" title="Next Step (Right Arrow)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+      </div>
+
+      <!-- Quick Action Utilities -->
+      <div class="nav-right">
+        <button id="ineq-graph-btn" class="tool-icon-btn" title="Open 2D Inequality Graph (G or I)" style="border-color: rgba(0, 240, 255, 0.4); background: rgba(0, 240, 255, 0.08);">
+          <span>📈 2D Graph</span>
+          <kbd style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-cyan);">G</kbd>
+        </button>
+        <button id="guide-btn" class="tool-icon-btn" title="Jump to 3D Construction Walkthrough">
+          <span>📐 3D Guide</span>
+        </button>
+        <button id="reset-btn" class="tool-icon-btn" title="Reset to Start (R)">
+          <span>↺ Reset</span>
+          <kbd style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);">R</kbd>
+        </button>
+        <button id="sound-toggle-btn" class="tool-icon-btn" title="Toggle Sound FX (M)">
+          <span id="sound-icon">🔊</span>
+          <span>SFX</span>
+        </button>
+        <button id="help-btn" class="tool-icon-btn" title="Keyboard Shortcuts (?)">
+          <span>⌨ Keys</span>
+        </button>
+        <button id="fullscreen-btn" class="tool-icon-btn" title="Toggle Fullscreen (F)">
+          <span id="fullscreen-icon">⛶</span>
+          <span>Fullscreen</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Split Screen: Left 3D Viewport, Right Narrative Steps -->
+    <main class="main-split">
+      <!-- Left 3D Viewport -->
+      <section id="viewport-container">
+        <!-- Unity-style Scene View Gizmo Overlay -->
+        <div class="unity-gizmo-box" title="Click cones to snap camera!">
+          <canvas id="unity-gizmo-canvas"></canvas>
+          <div class="gizmo-label" id="gizmo-proj-label">⋖ Persp</div>
+        </div>
+
+        <!-- 3D Plane & Boundary Index Box with Individual Toggle Controls -->
+        <div class="plane-index-box" id="plane-index-box">
+          <div class="index-box-header" id="index-box-header">
+            <div class="index-header-left">
+              <span class="index-header-icon">📐</span>
+              <span class="index-header-title">3D Plane Index</span>
+              <span class="index-count-badge" id="index-active-count">0/9</span>
+            </div>
+            <div class="index-header-actions">
+              <button class="index-action-btn" id="index-toggle-all-btn" title="Toggle All Planes On/Off">Toggle All</button>
+              <button class="index-collapse-btn" id="index-collapse-btn" title="Minimize / Expand Index">▾</button>
+            </div>
+          </div>
+          <div class="index-box-body" id="index-box-body">
+            <!-- Non-Negativity Chamber Boundaries -->
+            <div class="index-section-title">Chamber Boundaries (1st Octant)</div>
+            <div class="index-item" data-plane="nonNegX1">
+              <div class="index-item-info">
+                <span class="index-color-dot" style="background: #38bdf8; box-shadow: 0 0 6px #38bdf8;"></span>
+                <div class="index-name-wrap">
+                  <span class="index-plane-name">x₁ ≥ 0 Wall</span>
+                  <span class="index-plane-sub">Desk Bound (x₁ = 0)</span>
+                </div>
+              </div>
+              <button class="plane-switch" data-plane="nonNegX1" role="switch" aria-checked="false">
+                <span class="switch-slider"></span>
+              </button>
+            </div>
+
+            <div class="index-item" data-plane="nonNegX2">
+              <div class="index-item-info">
+                <span class="index-color-dot" style="background: #f43f5e; box-shadow: 0 0 6px #f43f5e;"></span>
+                <div class="index-name-wrap">
+                  <span class="index-plane-name">x₂ ≥ 0 Wall</span>
+                  <span class="index-plane-sub">Chair Bound (x₂ = 0)</span>
+                </div>
+              </div>
+              <button class="plane-switch" data-plane="nonNegX2" role="switch" aria-checked="false">
+                <span class="switch-slider"></span>
+              </button>
+            </div>
+
+            <div class="index-item" data-plane="nonNegZ">
+              <div class="index-item-info">
+                <span class="index-color-dot" style="background: #10b981; box-shadow: 0 0 6px #10b981;"></span>
+                <div class="index-name-wrap">
+                  <span class="index-plane-name">Z ≥ 0 Floor</span>
+                  <span class="index-plane-sub">Base Elevation (Z = 0)</span>
+                </div>
+              </div>
+              <button class="plane-switch" data-plane="nonNegZ" role="switch" aria-checked="false">
+                <span class="switch-slider"></span>
+              </button>
+            </div>
+
+            <!-- Resource Constraints & Polytope -->
+            <div class="index-section-title">Constraints & Feasible Polytope</div>
+            <div class="index-item" data-plane="wood">
+              <div class="index-item-info">
+                <span class="index-color-dot" style="background: #00f0ff; box-shadow: 0 0 6px #00f0ff;"></span>
+                <div class="index-name-wrap">
+                  <span class="index-plane-name">Wood Plane</span>
+                  <span class="index-plane-sub">2x₁ + 1x₂ = 5 (≤ 5)</span>
+                </div>
+              </div>
+              <button class="plane-switch" data-plane="wood" role="switch" aria-checked="false">
+                <span class="switch-slider"></span>
+              </button>
+            </div>
+
+            <div class="index-item" data-plane="labor">
+              <div class="index-item-info">
+                <span class="index-color-dot" style="background: #a855f7; box-shadow: 0 0 6px #a855f7;"></span>
+                <div class="index-name-wrap">
+                  <span class="index-plane-name">Labor Plane</span>
+                  <span class="index-plane-sub">1x₁ + 2x₂ = 5 (≤ 5)</span>
+                </div>
+              </div>
+              <button class="plane-switch" data-plane="labor" role="switch" aria-checked="false">
+                <span class="switch-slider"></span>
+              </button>
+            </div>
+
+            <div class="index-item" data-plane="polyhedron">
+              <div class="index-item-info">
+                <span class="index-color-dot" style="background: #10b981; box-shadow: 0 0 6px #10b981;"></span>
+                <div class="index-name-wrap">
+                  <span class="index-plane-name">Feasible Polyhedron</span>
+                  <span class="index-plane-sub">3D Continuous Crystal</span>
+                </div>
+              </div>
+              <button class="plane-switch" data-plane="polyhedron" role="switch" aria-checked="false">
+                <span class="switch-slider"></span>
+              </button>
+            </div>
+
+            <div class="index-item" data-plane="objective">
+              <div class="index-item-info">
+                <span class="index-color-dot" style="background: #34d399; box-shadow: 0 0 6px #34d399;"></span>
+                <div class="index-name-wrap">
+                  <span class="index-plane-name">Objective Ceiling</span>
+                  <span class="index-plane-sub">Z = 2x₁ + 3x₂</span>
+                </div>
+              </div>
+              <button class="plane-switch" data-plane="objective" role="switch" aria-checked="false">
+                <span class="switch-slider"></span>
+              </button>
+            </div>
+
+            <!-- ILP Gomory & Lattice -->
+            <div class="index-section-title">Integer Programming (ILP)</div>
+            <div class="index-item" data-plane="cut">
+              <div class="index-item-info">
+                <span class="index-color-dot" style="background: #ff0055; box-shadow: 0 0 6px #ff0055;"></span>
+                <div class="index-name-wrap">
+                  <span class="index-plane-name">Gomory Cut</span>
+                  <span class="index-plane-sub">1x₁ + 1x₂ = 3 (≤ 3)</span>
+                </div>
+              </div>
+              <button class="plane-switch" data-plane="cut" role="switch" aria-checked="false">
+                <span class="switch-slider"></span>
+              </button>
+            </div>
+
+            <div class="index-item" data-plane="lattice">
+              <div class="index-item-info">
+                <span class="index-color-dot" style="background: #ffd700; box-shadow: 0 0 6px #ffd700;"></span>
+                <div class="index-name-wrap">
+                  <span class="index-plane-name">Integer Lattice</span>
+                  <span class="index-plane-sub">Grid (x₁, x₂) ∈ ℤ²</span>
+                </div>
+              </div>
+              <button class="plane-switch" data-plane="lattice" role="switch" aria-checked="false">
+                <span class="switch-slider"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Viewport Floating HUD Readout -->
+        <div class="viewport-hud">
+          <div class="hud-pill coords-hud">
+            <div class="coord-item">
+              <span class="coord-label">Desks x₁:</span>
+              <span class="coord-val x1" id="hud-x1">0.00</span>
+            </div>
+            <div class="coord-item">
+              <span class="coord-label">Chairs x₂:</span>
+              <span class="coord-val x2" id="hud-x2">0.00</span>
+            </div>
+            <div class="coord-item">
+              <span class="coord-label">Scaled Z:</span>
+              <span class="coord-val z" id="hud-z">0.00</span>
+            </div>
+            <div class="coord-item">
+              <span class="coord-label">Total Profit:</span>
+              <span class="coord-val profit" id="hud-dollar">$0</span>
+            </div>
+          </div>
+
+          <div class="hud-pill camera-views-hud">
+            <button class="cam-btn" data-view="perspective">Perspective</button>
+            <button class="cam-btn" data-view="top">Top (2D)</button>
+            <button class="cam-btn" data-view="front">Front (x₁-Z)</button>
+            <button class="cam-btn" data-view="side">Side (x₂-Z)</button>
+            <button class="cam-btn" data-view="focus">Focus Point</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Narrative Scrollable Pane -->
+      <section id="steps-container">
+        <!-- Dynamically populated step cards -->
+      </section>
+    </main>
+  </div>
+
+  <!-- ======================================================================
+       Keyboard Shortcuts Modal
+       ====================================================================== -->
+  <div id="shortcuts-modal">
+    <div class="modal-box">
+      <h3 class="modal-title">Presentation Hotkeys</h3>
+      <div class="shortcut-list">
+        <div class="shortcut-row">
+          <span>Switch to Simplex Method</span>
+          <div class="shortcut-keys"><kbd>1</kbd> / <kbd>S</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Switch to Gomory Cutting Plane</span>
+          <div class="shortcut-keys"><kbd>2</kbd> / <kbd>C</kbd> / <kbd>G</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Next Step / Advance</span>
+          <div class="shortcut-keys"><kbd>→</kbd> / <kbd>Space</kbd> / <kbd>Enter</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Previous Step / Revert</span>
+          <div class="shortcut-keys"><kbd>←</kbd> / <kbd>Backspace</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Toggle Fullscreen</span>
+          <div class="shortcut-keys"><kbd>F</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Reset Current Method</span>
+          <div class="shortcut-keys"><kbd>R</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Toggle 2D Inequality Graph</span>
+          <div class="shortcut-keys"><kbd>G</kbd> / <kbd>I</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Top-Down (2D Decision Plane)</span>
+          <div class="shortcut-keys"><kbd>T</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>3D Perspective View</span>
+          <div class="shortcut-keys"><kbd>P</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Toggle Sound Effects</span>
+          <div class="shortcut-keys"><kbd>M</kbd></div>
+        </div>
+      </div>
+      <button id="modal-close-btn" class="modal-close-btn">Close (Esc)</button>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
