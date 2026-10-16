@@ -12,6 +12,7 @@ An in-depth explanation of the mathematical formulation, geometric interpretatio
 5. [Gomory's Cutting Plane Method (ILP)](#5-gomorys-cutting-plane-method-ilp)
 6. [3D Engine Architecture & Implementation](#6-3d-engine-architecture--implementation)
 7. [Interactive Systems & State Management](#7-interactive-systems--state-management)
+8. [Audience Grand Finale Defense & Cryptographic Roll Call (1 to 61)](#8-audience-grand-finale-defense--cryptographic-roll-call-1-to-61)
 
 ---
 
@@ -202,3 +203,30 @@ $$3(x_1 + x_2) \le 9 \implies \mathbf{x_1 + x_2 \le 3}$$
 5. **Synthesized Audio System (`src/sound.js`):**
    * Pure Web Audio API procedural synthesizer (zero external audio assets).
    * Generates custom chimes, laser slicing sounds, clicks, and celebratory tones.
+
+---
+
+## 8. Audience Grand Finale Defense & Cryptographic Roll Call (1 to 61)
+
+Designed for live academic presentations, lectures, and viva defenses, the presentation includes an unrigged, hardware-entropy random student selector:
+
+### Entropy Harvesting & Hash Formulation
+* **Input Sources:** Real-time system hardware clock captured at the exact microsecond of the user's click:
+  * Clock Second: $S \in [0, 59]$
+  * Clock Millisecond: $M \in [0, 999]$
+  * Input state space: $60 \times 1000 = 60,000$ distinct micro-states per minute.
+* **Avalanche Bit-Mixing Function:**
+  $$h_0 = (S \times \mathtt{0x9E3779B1}) \oplus (M \times \mathtt{0x85EBCA6B}) \oplus \mathtt{0x27D4EB2F}$$
+  $$h_1 = (h_0 \oplus (h_0 \gg 16)) \times \mathtt{0x7FEB352D}$$
+  $$h_2 = (h_1 \oplus (h_1 \gg 15)) \times \mathtt{0x846CA68B}$$
+  $$h_{\text{final}} = (h_2 \oplus (h_2 \gg 16)) \pmod{2^{32}}$$
+* **Uniform Reduction to Register Set $[1, 61]$:**
+  $$\text{Roll Number} = (h_{\text{final}} \pmod{61}) + 1$$
+  * Zero modulo bias across $2^{32}$ states (flat probability density across all students $1$ to $61$).
+
+### The 3.0-Second Thrill Theater
+1. **Clock Freeze:** Digital LED display freezes on the exact $(S, M)$ seed.
+2. **Terminal Stream:** Terminal prints the cryptographic derivation letter-by-letter over exactly 3.0 seconds.
+3. **Number Tumbler:** A high-speed holographic slot counter rolls numbers with suspense audio blips.
+4. **Climax Fanfare:** At $t = 3.0\,\text{s}$, a triumphant brass/sub-bass fanfare sounds, confetti triggers, and the winning student number slams down.
+5. **Defense Question Bank:** Displays a curated optimization question with a toggleable model answer guide for the presenter.

@@ -184,6 +184,70 @@ class SoundFX {
     osc.start(now);
     osc.stop(now + 0.45);
   }
+
+  playSuspenseTick(pitch = 900) {
+    if (this.muted) return;
+    this.init();
+    if (!this.audioCtx) return;
+
+    const now = this.audioCtx.currentTime;
+    const osc = this.audioCtx.createOscillator();
+    const gain = this.audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(pitch, now);
+    osc.frequency.exponentialRampToValueAtTime(pitch * 0.7, now + 0.035);
+
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+
+    osc.connect(gain);
+    gain.connect(this.audioCtx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.035);
+  }
+
+  playRollRevealFanfare() {
+    if (this.muted) return;
+    this.init();
+    if (!this.audioCtx) return;
+
+    const now = this.audioCtx.currentTime;
+    // Majestic dramatic chord with bass boom: D3, A3, D4, F#4, A4
+    const freqs = [146.83, 220.00, 293.66, 369.99, 440.00, 587.33];
+    
+    // Low sub bass impact
+    const subOsc = this.audioCtx.createOscillator();
+    const subGain = this.audioCtx.createGain();
+    subOsc.type = 'sine';
+    subOsc.frequency.setValueAtTime(110, now);
+    subOsc.frequency.exponentialRampToValueAtTime(45, now + 0.7);
+    subGain.gain.setValueAtTime(0.25, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+    subOsc.connect(subGain);
+    subGain.connect(this.audioCtx.destination);
+    subOsc.start(now);
+    subOsc.stop(now + 0.8);
+
+    freqs.forEach((freq, idx) => {
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      osc.type = idx % 2 === 0 ? 'triangle' : 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+
+      gain.gain.setValueAtTime(0.01, now + idx * 0.04);
+      gain.gain.linearRampToValueAtTime(0.18, now + idx * 0.04 + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 1.2);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+
+      osc.start(now + idx * 0.04);
+      osc.stop(now + idx * 0.04 + 1.2);
+    });
+  }
 }
 
 export const sound = new SoundFX();

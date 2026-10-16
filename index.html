@@ -12,7 +12,16 @@
        ====================================================================== -->
   <div id="splash-overlay">
     <div class="splash-content">
-      <div class="splash-badge">Operations Research 3D Presentation</div>
+      <div class="splash-badge-row">
+        <div class="splash-badge">Operations Research 3D Presentation</div>
+        <div class="aspect-control-group" title="Projector Screen Ratio (Hotkey: A)">
+          <span class="aspect-group-label">PROJECTOR:</span>
+          <div class="aspect-pill-box">
+            <button class="aspect-pill-btn active" data-ratio="16:9" title="16:9 Widescreen Projector">16:9</button>
+            <button class="aspect-pill-btn" data-ratio="1:1" title="1:1 Square Projector">1:1</button>
+          </div>
+        </div>
+      </div>
       <h1 class="splash-title">Furniture Maker Optimization</h1>
       <p class="splash-subtitle">
         Interactive 3D Geometric Analysis: <strong>Simplex Method (Continuous LP)</strong> vs. 
@@ -31,6 +40,7 @@
         <span><kbd>2</kbd> Gomory</span>
         <span><kbd>→</kbd> Next Step</span>
         <span><kbd>←</kbd> Prev Step</span>
+        <span><kbd>A</kbd> 16:9 / 1:1</span>
         <span><kbd>F</kbd> Fullscreen</span>
       </div>
     </div>
@@ -48,12 +58,21 @@
           <span class="badge-pulse"></span>
           <span>🏭 INDUSTRIAL OPTIMIZATION • AUDIENCE CHALLENGE</span>
         </div>
-        <button id="question-back-btn" class="question-back-btn" title="Back to Intro Screen">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-          <span>Back to Intro</span>
-        </button>
+        <div class="question-header-actions">
+          <div class="aspect-control-group" title="Projector Screen Ratio (Hotkey: A)">
+            <span class="aspect-group-label">PROJECTOR:</span>
+            <div class="aspect-pill-box">
+              <button class="aspect-pill-btn active" data-ratio="16:9" title="16:9 Widescreen Projector">16:9</button>
+              <button class="aspect-pill-btn" data-ratio="1:1" title="1:1 Square Projector">1:1</button>
+            </div>
+          </div>
+          <button id="question-back-btn" class="question-back-btn" title="Back to Intro Screen">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            <span>Back to Intro</span>
+          </button>
+        </div>
       </div>
 
       <!-- Main Headline -->
@@ -219,11 +238,13 @@
         <!-- Method Switcher Tabs -->
         <div class="mode-tabs">
           <button id="tab-simplex" class="mode-tab active" data-mode="simplex">
-            <span>Simplex Method (Continuous)</span>
+            <span class="tab-full-label">Simplex Method (Continuous)</span>
+            <span class="tab-compact-label">Simplex</span>
             <kbd>1</kbd>
           </button>
           <button id="tab-gomory" class="mode-tab" data-mode="gomory">
-            <span>Gomory's Cutting Plane (ILP)</span>
+            <span class="tab-full-label">Gomory's Cutting Plane (ILP)</span>
+            <span class="tab-compact-label">Gomory Cut</span>
             <kbd>2</kbd>
           </button>
         </div>
@@ -248,9 +269,22 @@
 
       <!-- Quick Action Utilities -->
       <div class="nav-right">
+        <!-- Projector Aspect Ratio Switcher (16:9 vs 1:1) -->
+        <div class="aspect-control-group" title="Projector Screen Ratio: 16:9 Widescreen or 1:1 Square (Hotkey: A)">
+          <span class="aspect-group-label">PROJECTOR</span>
+          <div class="aspect-pill-box">
+            <button id="aspect-btn-169" class="aspect-pill-btn active" data-ratio="16:9" title="16:9 Widescreen Projector [A]">16:9</button>
+            <button id="aspect-btn-11" class="aspect-pill-btn" data-ratio="1:1" title="1:1 Square Projector [A]">1:1</button>
+          </div>
+        </div>
+
         <button id="ineq-graph-btn" class="tool-icon-btn" title="Open 2D Inequality Graph (G or I)" style="border-color: rgba(0, 240, 255, 0.4); background: rgba(0, 240, 255, 0.08);">
           <span>📈 2D Graph</span>
           <kbd style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-cyan);">G</kbd>
+        </button>
+        <button id="audience-quiz-btn" class="tool-icon-btn audience-quiz-nav-btn" title="Final Question: Roll Call Student 1-61 (Q)" style="border-color: rgba(255, 215, 0, 0.45); background: rgba(255, 215, 0, 0.1);">
+          <span style="color: #ffd700;">🎯 Roll Call (1-61)</span>
+          <kbd style="font-family: var(--font-mono); font-size: 10px; color: #ffd700;">Q</kbd>
         </button>
         <button id="guide-btn" class="tool-icon-btn" title="Jump to 3D Construction Walkthrough">
           <span>📐 3D Guide</span>
@@ -488,6 +522,10 @@
           <div class="shortcut-keys"><kbd>F</kbd></div>
         </div>
         <div class="shortcut-row">
+          <span>Projector Ratio (16:9 / 1:1)</span>
+          <div class="shortcut-keys"><kbd>A</kbd></div>
+        </div>
+        <div class="shortcut-row">
           <span>Reset Current Method</span>
           <div class="shortcut-keys"><kbd>R</kbd></div>
         </div>
@@ -507,8 +545,164 @@
           <span>Toggle Sound Effects</span>
           <div class="shortcut-keys"><kbd>M</kbd></div>
         </div>
+        <div class="shortcut-row" style="background: rgba(255, 215, 0, 0.08); border-radius: 4px; padding: 4px 6px;">
+          <span style="color: #ffd700; font-weight: 600;">🎯 Final Audience Quiz (Roll Call 1-61)</span>
+          <div class="shortcut-keys"><kbd style="color: #ffd700; border-color: rgba(255, 215, 0, 0.5);">Q</kbd></div>
+        </div>
       </div>
       <button id="modal-close-btn" class="modal-close-btn">Close (Esc)</button>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       Final Audience Question & Random Student Roll-Call Overlay (1 to 61)
+       ====================================================================== -->
+  <div id="audience-quiz-overlay" class="audience-quiz-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="quiz-modal-title">
+    <div class="quiz-backdrop"></div>
+    <div class="audience-quiz-container">
+      <!-- Quiz Overlay Header -->
+      <header class="quiz-header">
+        <div class="quiz-header-left">
+          <div class="quiz-badge">
+            <span class="pulse-spark">🎯</span>
+            <span>GRAND FINALE • AUDIENCE DEFENSE & ROLL CALL</span>
+          </div>
+          <h2 id="quiz-modal-title" class="quiz-title">
+            Random Register Number Selector <span class="highlight-range">(1 to 61)</span>
+          </h2>
+          <p class="quiz-subtitle">
+            Cryptographic hardware-entropy hash using exact clock seconds and milliseconds to fairly select a student to answer.
+          </p>
+        </div>
+        <div class="quiz-header-right">
+          <button id="close-audience-quiz-btn" class="quiz-exit-btn" title="Back to 3D Optimizer (Esc)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            <span>Exit [Esc]</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Stage Split: Controls & Real-Time Clock on Top -->
+      <div class="quiz-control-station">
+        <!-- Live Hardware Entropy Clock -->
+        <div class="entropy-clock-card">
+          <div class="clock-meta-bar">
+            <div class="clock-live-indicator">
+              <span class="live-dot" id="clock-live-dot"></span>
+              <span id="entropy-clock-status">LIVE HARDWARE CLOCK</span>
+            </div>
+            <div class="clock-formula-tag">Inputs: <code>Second</code> & <code>Millisecond</code></div>
+          </div>
+
+          <div class="clock-digital-readout">
+            <div class="digital-unit">
+              <div class="unit-label">SECOND (0 - 59)</div>
+              <div class="unit-val" id="digital-clock-sec">00</div>
+              <div class="unit-sub">SEC</div>
+            </div>
+            <div class="digital-separator">:</div>
+            <div class="digital-unit millisec-unit">
+              <div class="unit-label">MILLISECOND (0 - 999)</div>
+              <div class="unit-val" id="digital-clock-ms">000</div>
+              <div class="unit-sub">MS</div>
+            </div>
+          </div>
+
+          <div class="frozen-seed-banner hidden" id="frozen-seed-banner">
+            <span class="lock-icon">🔒</span>
+            <span id="frozen-seed-text">SEED FROZEN AT: 00s . 000ms</span>
+          </div>
+        </div>
+
+        <!-- The Big Thrilling Generate Button -->
+        <div class="roll-trigger-card">
+          <button id="generate-random-btn" class="generate-random-btn">
+            <span class="btn-glow-ring"></span>
+            <span class="btn-laser-sweep"></span>
+            <div class="btn-content">
+              <span class="btn-emoji">🎲⚡</span>
+              <span class="btn-main-text">GENERATE RANDOM</span>
+              <span class="btn-sub-pill">1 TO 61</span>
+            </div>
+          </button>
+          <div class="trigger-hint">
+            Captures current clock instant → Streams 3-second cryptographic calculation letter-by-letter
+          </div>
+        </div>
+      </div>
+
+      <!-- Theater Body: Left Terminal & Right Reveal/Question Card -->
+      <div class="quiz-theater-grid">
+        <!-- Left: Letter-by-Letter Hash Calculation Terminal -->
+        <div class="quiz-terminal-panel">
+          <div class="panel-header">
+            <div class="panel-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <span class="panel-title">TERMINAL: DIVERGENT CRYPTO-HASH ENGINE</span>
+            <span class="panel-state-tag" id="terminal-state-tag">STANDBY</span>
+          </div>
+          <div class="terminal-body" id="hash-terminal-body">
+            <div class="term-placeholder">
+              <p>⚡ System waiting for trigger.</p>
+              <p>Click <strong>"GENERATE RANDOM"</strong> to freeze clock entropy (second & millisecond) and stream live mathematical derivation letter-by-letter over 3.0 seconds.</p>
+            </div>
+          </div>
+          <div class="terminal-progress-bar">
+            <div class="terminal-progress-fill" id="terminal-progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- Right: Reveal Showcase & Selected Question Card -->
+        <div class="quiz-results-panel">
+          <!-- Big Roll Number Tumbler Display -->
+          <div class="roll-reveal-box" id="roll-reveal-box">
+            <div class="reveal-top-label">
+              <span class="label-spark">★</span>
+              <span>SELECTED REGISTER NUMBER</span>
+              <span class="label-spark">★</span>
+            </div>
+            <div class="roll-huge-number" id="roll-huge-number">
+              <span class="digit-holder">?</span><span class="digit-holder">?</span>
+            </div>
+            <div class="reveal-status-msg" id="reveal-status-msg">
+              Awaiting random selection
+            </div>
+          </div>
+
+          <!-- Question Challenge Card for the Selected Student -->
+          <div class="student-question-card" id="student-question-card">
+            <div class="question-card-header">
+              <div class="q-badge" id="q-number-badge">QUESTION 1 OF 4</div>
+              <button id="next-question-btn" class="next-q-btn" title="Cycle to next question in bank">
+                <span>🔄 Next Question</span>
+              </button>
+            </div>
+
+            <h3 class="q-main-title" id="q-main-title">
+              "Why did blind rounding (1.67, 1.67) down to (1, 1) yield only $500, while Gomory found (1, 2) giving $800?"
+            </h3>
+
+            <p class="q-sub-detail" id="q-sub-detail">
+              Target Student: Analyze the 3D feasible polyhedron. How does discrete manufacturing differ from fractional linear programming?
+            </p>
+
+            <!-- Presenter Key / Reveal Accordion -->
+            <div class="presenter-key-accordion">
+              <button id="toggle-key-btn" class="key-accordion-btn">
+                <span class="key-icon">💡</span>
+                <span>Show Presenter Answer Key</span>
+                <span class="key-arrow" id="key-arrow">▼</span>
+              </button>
+              <div class="key-answer-box hidden" id="key-answer-box">
+                <p><strong>Official Model Answer:</strong> Blind rounding down to (1, 1) leaves 1 unit of lumber and 2 hours of labor unused, throwing away $300! Point (1, 2) is completely integer, utilizes 4/5 wood and 100% labor, maximizing profit to $800. Gomory's cut sliced away fractional vertices without deleting (1, 2).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

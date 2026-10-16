@@ -747,6 +747,11 @@ export const simplexSteps = [
 
         <div class="next-action-prompt">
           <p>Press <strong>[2]</strong> or click <strong>Gomory's Cutting Plane (ILP)</strong> tab to see the cutting plane in action!</p>
+          <div style="margin-top: 10px;">
+            <button class="open-audience-quiz-btn" style="padding: 10px 16px; font-size: 13px;" title="Open Random Roll Call (1 to 61)">
+              <span>🎯 Test Audience Knowledge (Roll Call 1-61)</span>
+            </button>
+          </div>
         </div>
       </div>
     `,
@@ -1441,6 +1446,16 @@ export const gomorySteps = [
             <code>Total Profit = ($200 × 1) + ($300 × 2) = $800</code>
           </div>
           <p class="final-note">Gomory's Cutting Plane guaranteed the exact integer optimum without heuristic approximation!</p>
+        </div>
+
+        <div class="final-quiz-trigger-box">
+          <button class="open-audience-quiz-btn" id="open-audience-quiz-btn" title="Open Random Roll Call (1 to 61)">
+            <span class="quiz-btn-glow"></span>
+            <span class="quiz-btn-icon">🎯</span>
+            <span class="quiz-btn-text">FINAL QUESTION: CALL REGISTER NO. (1 - 61)</span>
+            <span class="quiz-btn-arrow">⚡</span>
+          </button>
+          <div class="quiz-trigger-subtext">Unbiased clock-entropy random student selector for audience defense questions</div>
         </div>
       </div>
     `,

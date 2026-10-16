@@ -119,14 +119,15 @@ export class SceneManager {
     });
 
     // Responsive resize
-    window.addEventListener('resize', () => {
-      if (!this.container) return;
-      const w = this.container.clientWidth;
-      const h = this.container.clientHeight;
-      this.camera.aspect = w / h;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(w, h);
-    });
+    this.onWindowResize = this.onWindowResize.bind(this);
+    window.addEventListener('resize', this.onWindowResize);
+
+    if (window.ResizeObserver && this.container) {
+      this.resizeObserver = new ResizeObserver(() => {
+        this.onWindowResize();
+      });
+      this.resizeObserver.observe(this.container);
+    }
 
     // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
@@ -146,6 +147,16 @@ export class SceneManager {
     const accentLight = new THREE.PointLight(0x9d4edd, 0.8, 15);
     accentLight.position.set(3, 4, 3);
     this.scene.add(accentLight);
+  }
+
+  onWindowResize() {
+    if (!this.container || !this.renderer || !this.camera) return;
+    const w = this.container.clientWidth;
+    const h = this.container.clientHeight;
+    if (w === 0 || h === 0) return;
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
   }
 
   toWorld(x1, Z, x2) {
@@ -442,7 +453,7 @@ export class SceneManager {
       [1.5, 4.5, 7.5].forEach(yPos => {
         const arrowStart = this.toWorld(0, yPos, x2Pos);
         const arrow = this.create3DArrow(arrowStart, new THREE.Vector3(1, 0, 0), 0.6, 0x38bdf8);
-        arrow.userData = { isWall: true, yPos };
+        arrow.userData = { isWall: true, yPos, planeKey: 'nonNegX1' };
         this.octantGuideGroup.add(arrow);
         this.octantArrows.push(arrow);
       });
@@ -461,7 +472,7 @@ export class SceneManager {
       [1.5, 4.5, 7.5].forEach(yPos => {
         const arrowStart = this.toWorld(x1Pos, yPos, 0);
         const arrow = this.create3DArrow(arrowStart, new THREE.Vector3(0, 0, 1), 0.6, 0xf43f5e);
-        arrow.userData = { isWall: true, yPos };
+        arrow.userData = { isWall: true, yPos, planeKey: 'nonNegX2' };
         this.octantGuideGroup.add(arrow);
         this.octantArrows.push(arrow);
       });
@@ -490,7 +501,7 @@ export class SceneManager {
       [1.5, 3.5, 4.8].forEach(x2Pos => {
         const arrowStart = this.toWorld(x1Pos, 0.05, x2Pos);
         const arrow = this.create3DArrow(arrowStart, new THREE.Vector3(0, 1, 0), 0.6, 0x10b981);
-        arrow.userData = { isWall: false, yPos: 0 };
+        arrow.userData = { isWall: false, yPos: 0, planeKey: 'nonNegZ' };
         this.octantGuideGroup.add(arrow);
         this.octantArrows.push(arrow);
       });
@@ -979,7 +990,9 @@ export class SceneManager {
     // 27 Directional Arrows - ONLY on Step 1 (non-negativity introduction)
     if (this.octantArrows) {
       this.octantArrows.forEach(arrow => {
-        if (!isNonNegStep) {
+        const pKey = arrow.userData.planeKey;
+        const planeActive = pKey === 'nonNegX1' ? showX1 : (pKey === 'nonNegX2' ? showX2 : (pKey === 'nonNegZ' ? showZ : true));
+        if (!isNonNegStep || !planeActive) {
           arrow.visible = false;
         } else {
           arrow.visible = true;

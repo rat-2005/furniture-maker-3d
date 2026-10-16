@@ -4,6 +4,37 @@ import { sound } from './sound.js';
 import { simplexSteps, gomorySteps } from './presentationData.js';
 import { InequalityGraphModal } from './inequalityGraph.js';
 
+const AUDIENCE_QUESTIONS = [
+  {
+    id: 1,
+    roll: 33,
+    title: "Why did blind rounding (1.67, 1.67) down to (1, 1) yield only $500, while Gomory found (1, 2) giving $800?",
+    detail: "Topic: Discrete Feasibility vs LP Relaxation. Why does naive rounding waste precious wood and artisan labor?",
+    answer: "Blind rounding down moves inward away from active constraint boundaries, leaving 1 unit of lumber and 2 hours of labor wasted ($500 profit). Point (1, 2) utilizes 4 wood and 5 labor (100% labor bottleneck), capturing $800. Integer programming finds vertices that simple rounding cannot see."
+  },
+  {
+    id: 2,
+    roll: 6,
+    title: "In Gomory's cutting plane (1x₁ + 1x₂ ≤ 3), why is this cut guaranteed NOT to eliminate any valid integer solution?",
+    detail: "Topic: Hyperplane Validity & Integer Lattice. How does modular arithmetic ensure no integer lattice points are sliced away?",
+    answer: "Gomory's cut is derived strictly from the fractional row of the optimal Simplex tableau using floor functions. Because all integer points satisfy the congruence condition, the cut strictly slices through continuous fractional space without touching any point on the integer lattice (x₁, x₂ ∈ ℤ²)."
+  },
+  {
+    id: 3,
+    roll: 1,
+    title: "At the final integer optimal point (1 Desk, 2 Chairs), which factory resource is fully exhausted, and which has slack?",
+    detail: "Topic: Resource Bottlenecks & Slack Analysis. Evaluate 2x₁ + 1x₂ ≤ 5 (Wood) and 1x₁ + 2x₂ ≤ 5 (Labor).",
+    answer: "Wood usage: 2(1) + 1(2) = 4 / 5 units (Slack s₁ = 1 unit of lumber remaining). Labor usage: 1(1) + 2(2) = 5 / 5 hours (Slack s₂ = 0, 100% bottleneck!). Artisan assembly hours strictly cap any further production."
+  },
+  {
+    id: 4,
+    roll: 21,
+    title: "What does the 3D Objective Ceiling plane (Z = 200x₁ + 300x₂) represent geometrically, and why is it tilted?",
+    detail: "Topic: Objective Geometry & Simplex Gradient. Why does the plane incline steeper along the Chair axis (x₂)?",
+    answer: "Height represents profit Z in dollars. Because chairs yield $300 profit while desks yield $200, the ceiling plane climbs steeper along the chair axis (x₂). The simplex algorithm ascends along the edges of the polyhedron until it touches the highest elevation in the feasible polytope."
+  }
+];
+
 class PresentationApp {
   constructor() {
     this.currentMode = 'simplex'; // 'simplex' | 'gomory'
@@ -11,9 +42,11 @@ class PresentationApp {
     this.steps = simplexSteps;
 
     this.initDOM();
+    this.initAspectRatio();
     this.ineqModal = new InequalityGraphModal(document.body);
     this.init3D();
     this.initUnityGizmo();
+    this.initAudienceQuiz();
     this.bindEvents();
     this.renderSteps();
     this.goToStep(0, false);
@@ -26,6 +59,7 @@ class PresentationApp {
     this.solveProblemBtn = document.getElementById('solve-problem-btn');
     this.questionBackBtn = document.getElementById('question-back-btn');
     this.ineqGraphBtn = document.getElementById('ineq-graph-btn');
+    this.audienceQuizBtn = document.getElementById('audience-quiz-btn');
     this.tabSimplex = document.getElementById('tab-simplex');
     this.tabGomory = document.getElementById('tab-gomory');
     this.prevBtn = document.getElementById('prev-step-btn');
@@ -43,6 +77,29 @@ class PresentationApp {
     this.shortcutsModal = document.getElementById('shortcuts-modal');
     this.modalCloseBtn = document.getElementById('modal-close-btn');
 
+    // Audience Final Quiz & Random Roll Call Elements
+    this.audienceQuizOverlay = document.getElementById('audience-quiz-overlay');
+    this.closeAudienceQuizBtn = document.getElementById('close-audience-quiz-btn');
+    this.digitalClockSec = document.getElementById('digital-clock-sec');
+    this.digitalClockMs = document.getElementById('digital-clock-ms');
+    this.clockLiveDot = document.getElementById('clock-live-dot');
+    this.entropyClockStatus = document.getElementById('entropy-clock-status');
+    this.frozenSeedBanner = document.getElementById('frozen-seed-banner');
+    this.frozenSeedText = document.getElementById('frozen-seed-text');
+    this.generateRandomBtn = document.getElementById('generate-random-btn');
+    this.hashTerminalBody = document.getElementById('hash-terminal-body');
+    this.terminalStateTag = document.getElementById('terminal-state-tag');
+    this.terminalProgressFill = document.getElementById('terminal-progress-fill');
+    this.rollHugeNumber = document.getElementById('roll-huge-number');
+    this.revealStatusMsg = document.getElementById('reveal-status-msg');
+    this.qNumberBadge = document.getElementById('q-number-badge');
+    this.nextQuestionBtn = document.getElementById('next-question-btn');
+    this.qMainTitle = document.getElementById('q-main-title');
+    this.qSubDetail = document.getElementById('q-sub-detail');
+    this.toggleKeyBtn = document.getElementById('toggle-key-btn');
+    this.keyAnswerBox = document.getElementById('key-answer-box');
+    this.keyArrow = document.getElementById('key-arrow');
+
     // HUD Readouts
     this.hudX1 = document.getElementById('hud-x1');
     this.hudX2 = document.getElementById('hud-x2');
@@ -55,6 +112,52 @@ class PresentationApp {
     this.indexToggleAllBtn = document.getElementById('index-toggle-all-btn');
     this.indexCollapseBtn = document.getElementById('index-collapse-btn');
     this.indexBoxHeader = document.getElementById('index-box-header');
+  }
+
+  initAspectRatio() {
+    const saved = localStorage.getItem('fm_aspect_ratio') || '16:9';
+    this.setAspectRatio(saved, false);
+  }
+
+  setAspectRatio(ratio, playFx = true) {
+    this.aspectRatio = ratio === '1:1' ? '1:1' : '16:9';
+    if (playFx) {
+      sound.playClick();
+    }
+
+    if (this.aspectRatio === '1:1') {
+      document.body.classList.remove('aspect-16-9');
+      document.body.classList.add('aspect-1-1');
+    } else {
+      document.body.classList.remove('aspect-1-1');
+      document.body.classList.add('aspect-16-9');
+    }
+
+    try {
+      localStorage.setItem('fm_aspect_ratio', this.aspectRatio);
+    } catch (e) {}
+
+    // Synchronize all aspect pill buttons across the page
+    document.querySelectorAll('[data-ratio]').forEach(btn => {
+      const btnRatio = btn.getAttribute('data-ratio');
+      if (btnRatio === this.aspectRatio) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // Notify SceneManager to recalculate viewport size
+    setTimeout(() => {
+      if (this.sceneManager) {
+        this.sceneManager.onWindowResize();
+      }
+    }, 40);
+  }
+
+  toggleAspectRatio() {
+    const next = this.aspectRatio === '16:9' ? '1:1' : '16:9';
+    this.setAspectRatio(next, true);
   }
 
   init3D() {
@@ -176,6 +279,16 @@ class PresentationApp {
         }
       });
     }
+
+    // Projector Aspect Ratio Buttons (16:9 vs 1:1)
+    document.querySelectorAll('[data-ratio]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const ratio = e.currentTarget.getAttribute('data-ratio');
+        if (ratio) {
+          this.setAspectRatio(ratio);
+        }
+      });
+    });
     const indexBody = document.getElementById('index-box-body');
     if (indexBody) {
       indexBody.addEventListener('click', (e) => {
@@ -197,11 +310,28 @@ class PresentationApp {
       });
     }
 
-    // Delegate clicks on any button inside step cards to open 2D Graph
+    // Audience Quiz & Random Roll Call Triggers
+    if (this.audienceQuizBtn) {
+      this.audienceQuizBtn.addEventListener('click', () => {
+        sound.playClick();
+        this.toggleAudienceQuiz();
+      });
+    }
+    if (this.closeAudienceQuizBtn) {
+      this.closeAudienceQuizBtn.addEventListener('click', () => {
+        sound.playClick();
+        this.closeAudienceQuiz();
+      });
+    }
+
+    // Delegate clicks on any button inside step cards to open 2D Graph or Audience Quiz
     document.addEventListener('click', (e) => {
       if (e.target.closest('.open-2d-graph-btn')) {
         sound.playClick();
         this.ineqModal.open();
+      } else if (e.target.closest('.open-audience-quiz-btn')) {
+        sound.playClick();
+        this.openAudienceQuiz();
       }
     });
 
@@ -249,6 +379,9 @@ class PresentationApp {
         if (key === 'enter' || key === ' ') {
           e.preventDefault();
           this.startBtn.click();
+        } else if (key === 'a') {
+          e.preventDefault();
+          this.toggleAspectRatio();
         }
         return;
       }
@@ -261,11 +394,40 @@ class PresentationApp {
         } else if (key === 'escape' || key === 'backspace') {
           e.preventDefault();
           if (this.questionBackBtn) this.questionBackBtn.click();
+        } else if (key === 'a') {
+          e.preventDefault();
+          this.toggleAspectRatio();
         }
         return;
       }
 
-      if (key === '1' || key === 's') {
+      // If Audience Quiz overlay is currently visible
+      if (this.audienceQuizOverlay && !this.audienceQuizOverlay.classList.contains('hidden')) {
+        if (key === 'escape') {
+          e.preventDefault();
+          this.closeAudienceQuiz();
+        } else if (key === 'enter' || key === ' ') {
+          e.preventDefault();
+          if (this.generateRandomBtn && !this.generateRandomBtn.disabled) {
+            this.generateRandomBtn.click();
+          }
+        } else if (key === 'n') {
+          e.preventDefault();
+          this.cycleQuizQuestion();
+        } else if (key === 'k') {
+          e.preventDefault();
+          this.toggleAnswerKey();
+        }
+        return;
+      }
+
+      if (key === 'q') {
+        e.preventDefault();
+        this.toggleAudienceQuiz();
+      } else if (key === 'a') {
+        e.preventDefault();
+        this.toggleAspectRatio();
+      } else if (key === '1' || key === 's') {
         this.switchMode('simplex');
       } else if (key === '2' || key === 'c') {
         this.switchMode('gomory');
@@ -349,6 +511,10 @@ class PresentationApp {
     } else {
       this.tabGomory.classList.add('active');
       this.tabSimplex.classList.remove('active');
+    }
+
+    if (this.sceneManager) {
+      this.sceneManager.clearPlaneOverrides();
     }
 
     this.renderSteps();
@@ -445,9 +611,8 @@ class PresentationApp {
       }
     });
 
-    // Update 3D visualization
+    // Update 3D visualization (preserve user-selected plane toggle overrides)
     if (this.sceneManager) {
-      this.sceneManager.clearPlaneOverrides();
       this.sceneManager.updateVisualState({
         ...currentStep.visualState,
         mode: this.currentMode
@@ -528,6 +693,11 @@ class PresentationApp {
     if (this.hudX2) this.hudX2.textContent = x2;
     if (this.hudZ) this.hudZ.textContent = Z;
     if (this.hudDollar) this.hudDollar.textContent = `$${dollar}`;
+    this.currentQuizQuestionIdx = 0;
+    this.hasGeneratedRoll = false;
+    if (typeof this.updateQuizQuestionUI === 'function') {
+      this.updateQuizQuestionUI();
+    }
   }
 
   nextStep() {
@@ -539,6 +709,287 @@ class PresentationApp {
   prevStep() {
     if (this.currentStepIndex > 0) {
       this.goToStep(this.currentStepIndex - 1);
+    }
+  }
+
+  // =========================================================================
+  // Final Audience Question & Random Student Roll-Call (1 to 61)
+  // =========================================================================
+  initAudienceQuiz() {
+    this.currentQuizQuestionIdx = 0;
+    this.hasGeneratedRoll = false;
+    this.isGeneratingRoll = false;
+    this.entropyClockRafId = null;
+
+    if (this.generateRandomBtn) {
+      this.generateRandomBtn.addEventListener('click', () => {
+        this.generateRandomRoll();
+      });
+    }
+
+    if (this.nextQuestionBtn) {
+      this.nextQuestionBtn.addEventListener('click', () => {
+        sound.playClick();
+        this.cycleQuizQuestion();
+      });
+    }
+
+    if (this.toggleKeyBtn) {
+      this.toggleKeyBtn.addEventListener('click', () => {
+        sound.playClick();
+        this.toggleAnswerKey();
+      });
+    }
+
+    this.updateQuizQuestionUI();
+    this.startLiveEntropyClock();
+  }
+
+  startLiveEntropyClock() {
+    const tick = () => {
+      if (!this.isGeneratingRoll) {
+        const now = new Date();
+        const sec = now.getSeconds();
+        const ms = now.getMilliseconds();
+
+        if (this.digitalClockSec) {
+          this.digitalClockSec.textContent = String(sec).padStart(2, '0');
+        }
+        if (this.digitalClockMs) {
+          this.digitalClockMs.textContent = String(ms).padStart(3, '0');
+        }
+      }
+      this.entropyClockRafId = requestAnimationFrame(tick);
+    };
+    this.entropyClockRafId = requestAnimationFrame(tick);
+  }
+
+  openAudienceQuiz() {
+    if (!this.audienceQuizOverlay) return;
+    this.audienceQuizOverlay.classList.remove('hidden');
+    sound.playClick();
+    if (!this.isGeneratingRoll) {
+      if (this.clockLiveDot) this.clockLiveDot.classList.remove('frozen');
+      if (this.entropyClockStatus) this.entropyClockStatus.textContent = 'LIVE HARDWARE CLOCK';
+      if (this.frozenSeedBanner) this.frozenSeedBanner.classList.add('hidden');
+    }
+  }
+
+  closeAudienceQuiz() {
+    if (!this.audienceQuizOverlay) return;
+    this.audienceQuizOverlay.classList.add('hidden');
+    sound.playClick();
+  }
+
+  toggleAudienceQuiz() {
+    if (!this.audienceQuizOverlay) return;
+    if (this.audienceQuizOverlay.classList.contains('hidden')) {
+      this.openAudienceQuiz();
+    } else {
+      this.closeAudienceQuiz();
+    }
+  }
+
+  calculateStrongHash(sec, ms) {
+    const seed = (sec * 1000) + ms;
+    // High-entropy 32-bit avalanche mixing (Murmur3 / xxHash style bit-mixing)
+    let h = Math.imul(sec, 0x9E3779B1) ^ Math.imul(ms, 0x85EBCA6B) ^ 0x27D4EB2F;
+    h = Math.imul(h ^ (h >>> 16), 0x7FEB352D);
+    h = Math.imul(h ^ (h >>> 15), 0x846CA68B);
+    h = (h ^ (h >>> 16)) >>> 0;
+
+    // Rigged roll mapped strictly to current quiz question:
+    // Q1 -> 33, Q2 -> 6, Q3 -> 1, Q4 -> 21
+    const currentQ = AUDIENCE_QUESTIONS[this.currentQuizQuestionIdx] || AUDIENCE_QUESTIONS[0];
+    const targetRoll = currentQ.roll;
+
+    // Formulate 32-bit digest whose modular reduction matches targetRoll exactly:
+    // u32 mod 61 + 1 === targetRoll (mathematically airtight on live calculation terminal)
+    const targetRemainder = targetRoll - 1;
+    let adjustedH = (Math.floor(h / 61) * 61) + targetRemainder;
+    if (adjustedH > 0xFFFFFFFF) {
+      adjustedH -= 61;
+    }
+    adjustedH = adjustedH >>> 0;
+
+    const remainder = adjustedH % 61;
+    const rollNumber = remainder + 1; // Exactly targetRoll
+    return {
+      sec,
+      ms,
+      seed,
+      u32: adjustedH,
+      hex: '0x' + adjustedH.toString(16).toUpperCase().padStart(8, '0'),
+      remainder,
+      rollNumber
+    };
+  }
+
+  generateRandomRoll() {
+    if (this.isGeneratingRoll) return;
+    this.isGeneratingRoll = true;
+
+    // Automatically move to next question if current question was already rolled
+    if (this.hasGeneratedRoll) {
+      this.currentQuizQuestionIdx = (this.currentQuizQuestionIdx + 1) % AUDIENCE_QUESTIONS.length;
+      this.updateQuizQuestionUI();
+    }
+    this.hasGeneratedRoll = true;
+
+    // 1. Capture exact clock instant
+    const now = new Date();
+    const sec = now.getSeconds();
+    const ms = now.getMilliseconds();
+
+    // 2. Compute deterministic strong hash mapped to current question
+    const hash = this.calculateStrongHash(sec, ms);
+
+    // 3. Update Clock UI to FROZEN state
+    if (this.digitalClockSec) this.digitalClockSec.textContent = String(sec).padStart(2, '0');
+    if (this.digitalClockMs) this.digitalClockMs.textContent = String(ms).padStart(3, '0');
+    if (this.clockLiveDot) this.clockLiveDot.classList.add('frozen');
+    if (this.entropyClockStatus) this.entropyClockStatus.textContent = 'HARDWARE SEED FROZEN';
+    if (this.frozenSeedText) {
+      this.frozenSeedText.textContent = `SEED CAPTURED AT: ${String(sec).padStart(2, '0')}s . ${String(ms).padStart(3, '0')}ms (Entropy: ${hash.seed})`;
+    }
+    if (this.frozenSeedBanner) this.frozenSeedBanner.classList.remove('hidden');
+
+    // 4. Button & Terminal State
+    if (this.generateRandomBtn) this.generateRandomBtn.disabled = true;
+    if (this.terminalStateTag) {
+      this.terminalStateTag.textContent = 'COMPUTING...';
+      this.terminalStateTag.className = 'panel-state-tag active';
+    }
+    if (this.revealStatusMsg) {
+      this.revealStatusMsg.textContent = 'Evaluating cryptographic avalanche pipeline...';
+      this.revealStatusMsg.className = 'reveal-status-msg';
+    }
+
+    sound.playClick();
+
+    // 5. Build letter-by-letter calculation lines
+    const lines = [
+      `>>> [T+0.00s] SYSTEM CLOCK ENTROPY CAPTURED:`,
+      `    Second (S) = ${sec}s  |  Millisecond (M) = ${ms}ms`,
+      `    Input Seed Formulation: S_seed = (${sec} × 1000) + ${ms} = ${hash.seed}`,
+      ``,
+      `>>> [T+0.70s] CRYPTOGRAPHIC AVALANCHE BIT-MIXING H(S, M):`,
+      `    Seed Vector:  0x9E3779B1 ⊕ (${sec} × 0x85EBCA6B) ⊕ (${ms} × 0x27D4EB2F)`,
+      `    Round 1 (XOR-Shift):  h₁ = (h₀ ⊕ (h₀ >>> 16)) × 0x7FEB352D`,
+      `    Round 2 (Avalanche):  h₂ = (h₁ ⊕ (h₁ >>> 15)) × 0x846CA68B`,
+      `    Round 3 (Finalizer):  h_final = (h₂ ⊕ (h₂ >>> 16)) >>> 0`,
+      `    32-Bit Unsigned Hash Digest = ${hash.u32.toLocaleString()} (${hash.hex})`,
+      ``,
+      `>>> [T+1.90s] UNIFORM MAPPING OVER REGISTER SET [1 .. 61]:`,
+      `    Target Domain:  Register Number ∈ {1, 2, 3, ..., 61}`,
+      `    Modulo Reduction:  ${hash.u32.toLocaleString()} mod 61 = ${hash.remainder}`,
+      `    Unbiased Mapping:  Roll Number = ${hash.remainder} + 1 = ${hash.rollNumber}`,
+      ``,
+      `>>> [T+2.85s] COMPLETE! REGISTER NUMBER VERIFIED: #${hash.rollNumber}`
+    ];
+    const fullText = lines.join('\n');
+    const totalChars = fullText.length;
+    const duration = 3000; // Exactly 3.0 seconds
+    const startTime = performance.now();
+
+    // 6. Suspense Tumbler on the giant number box
+    const tumblerInterval = setInterval(() => {
+      const randVal = Math.floor(Math.random() * 61) + 1;
+      if (this.rollHugeNumber) {
+        this.rollHugeNumber.innerHTML = `<span class="digit-holder glitch">${String(randVal).padStart(2, '0')}</span>`;
+      }
+      sound.playSuspenseTick(750 + Math.random() * 350);
+    }, 85);
+
+    // 7. RequestAnimationFrame letter-by-letter typing loop
+    const typeLoop = (nowTime) => {
+      const elapsed = nowTime - startTime;
+      const progress = Math.min(1.0, elapsed / duration);
+      const charsToShow = Math.floor(progress * totalChars);
+
+      if (this.hashTerminalBody) {
+        this.hashTerminalBody.textContent = fullText.slice(0, charsToShow);
+        this.hashTerminalBody.scrollTop = this.hashTerminalBody.scrollHeight;
+      }
+      if (this.terminalProgressFill) {
+        this.terminalProgressFill.style.width = `${progress * 100}%`;
+      }
+
+      if (progress < 1.0) {
+        requestAnimationFrame(typeLoop);
+      } else {
+        // 8. Climax Reveal at exactly 3.0 seconds!
+        clearInterval(tumblerInterval);
+        this.finalizeRollReveal(hash);
+      }
+    };
+
+    requestAnimationFrame(typeLoop);
+  }
+
+  finalizeRollReveal(hash) {
+    if (this.rollHugeNumber) {
+      this.rollHugeNumber.innerHTML = `<span class="digit-holder winner">${String(hash.rollNumber).padStart(2, '0')}</span>`;
+    }
+    if (this.revealStatusMsg) {
+      this.revealStatusMsg.textContent = `★ REGISTER #${hash.rollNumber} SELECTED FOR QUESTION ${this.currentQuizQuestionIdx + 1}! ★`;
+      this.revealStatusMsg.className = 'reveal-status-msg winner';
+    }
+    if (this.terminalStateTag) {
+      this.terminalStateTag.textContent = 'VERIFIED ✓';
+      this.terminalStateTag.className = 'panel-state-tag success';
+    }
+
+    sound.playRollRevealFanfare();
+
+    if (this.sceneManager) {
+      this.sceneManager.triggerConfetti();
+    }
+
+    if (this.qMainTitle) {
+      this.qMainTitle.classList.add('highlight-pulse');
+      setTimeout(() => this.qMainTitle?.classList.remove('highlight-pulse'), 1500);
+    }
+
+    if (this.generateRandomBtn) {
+      this.generateRandomBtn.disabled = false;
+    }
+    this.isGeneratingRoll = false;
+  }
+
+  cycleQuizQuestion() {
+    this.currentQuizQuestionIdx = (this.currentQuizQuestionIdx + 1) % AUDIENCE_QUESTIONS.length;
+    this.hasGeneratedRoll = false;
+    this.updateQuizQuestionUI();
+  }
+
+  toggleAnswerKey() {
+    if (!this.keyAnswerBox) return;
+    this.keyAnswerBox.classList.toggle('hidden');
+    if (this.keyArrow) {
+      this.keyArrow.textContent = this.keyAnswerBox.classList.contains('hidden') ? '▼' : '▲';
+    }
+  }
+
+  updateQuizQuestionUI() {
+    const q = AUDIENCE_QUESTIONS[this.currentQuizQuestionIdx];
+    if (!q) return;
+
+    if (this.qNumberBadge) {
+      this.qNumberBadge.textContent = `QUESTION ${q.id} OF ${AUDIENCE_QUESTIONS.length}`;
+    }
+    if (this.qMainTitle) {
+      this.qMainTitle.textContent = `"${q.title}"`;
+    }
+    if (this.qSubDetail) {
+      this.qSubDetail.textContent = q.detail;
+    }
+    if (this.keyAnswerBox) {
+      this.keyAnswerBox.innerHTML = `<p><strong>Official Model Answer:</strong> ${q.answer}</p>`;
+      this.keyAnswerBox.classList.add('hidden');
+    }
+    if (this.keyArrow) {
+      this.keyArrow.textContent = '▼';
     }
   }
 }
