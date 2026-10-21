@@ -3,60 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Furniture Maker: Simplex & Gomory Cutting Plane 3D Presentation</title>
+  <title>Gomory's Cutting Plane Presentation Engine (Pure & Mixed Integer LP)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./src/style.css">
 </head>
-<body>
+<body class="aspect-16-9">
   <!-- ======================================================================
        Splash Landing / Fullscreen Trigger
        ====================================================================== -->
   <div id="splash-overlay">
-    <div class="splash-content">
+    <div class="splash-content asmr-card">
       <div class="splash-badge-row">
-        <div class="splash-badge">Operations Research 3D Presentation</div>
+        <div class="splash-badge">Operations Research • 3D Geometric Optimization</div>
         <div class="aspect-control-group" title="Projector Screen Ratio (Hotkey: A)">
           <span class="aspect-group-label">PROJECTOR:</span>
           <div class="aspect-pill-box">
             <button class="aspect-pill-btn active" data-ratio="16:9" title="16:9 Widescreen Projector">16:9</button>
-            <button class="aspect-pill-btn" data-ratio="1:1" title="1:1 Square Projector">1:1</button>
+            <button class="aspect-pill-btn" data-ratio="1:1" title="1:1 Square Projector (Full-Bleed)">1:1</button>
           </div>
         </div>
       </div>
-      <h1 class="splash-title">Furniture Maker Optimization</h1>
+
+      <h1 class="splash-title">Gomory's Cutting Plane Method</h1>
       <p class="splash-subtitle">
-        Interactive 3D Geometric Analysis: <strong>Simplex Method (Continuous LP)</strong> vs. 
-        <strong>Gomory's Cutting Plane Method (Integer LP)</strong> with Unity Engine Visuals.
+        Interactive 3D Geometric Analysis: <strong>H.W. 1 Pure Integer LP</strong> (2 Cuts, Max Z = 23) vs. 
+        <strong>H.W. 2 Mixed Integer LP</strong> (Continuous Relaxations, Max Z = 26).
       </p>
       
-      <button id="start-presentation-btn" class="splash-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M8 5v14l11-7z"/>
-        </svg>
-        <span>START PRESENTATION</span>
-      </button>
+      <div class="splash-action-row">
+        <button id="start-presentation-btn" class="splash-btn asmr-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span>START PRESENTATION</span>
+        </button>
+        <button id="splash-diff-btn" class="diff-open-btn asmr-btn">
+          <span>⚡ What's Different From Previous?</span>
+        </button>
+      </div>
 
       <div class="splash-hotkeys-hint">
-        <span>Hotkeys: <kbd>1</kbd> Simplex</span>
-        <span><kbd>2</kbd> Gomory</span>
+        <span>Hotkeys: <kbd>1</kbd> H.W. 1 Pure</span>
+        <span><kbd>2</kbd> H.W. 2 Mixed</span>
         <span><kbd>→</kbd> Next Step</span>
         <span><kbd>←</kbd> Prev Step</span>
-        <span><kbd>A</kbd> 16:9 / 1:1</span>
-        <span><kbd>F</kbd> Fullscreen</span>
+        <span><kbd>[</kbd> / <kbd>]</kbd> Font Size</span>
+        <span><kbd>A</kbd> 16:9 / 1:1 Projector</span>
+        <span><kbd>C</kbd> What Changed</span>
       </div>
     </div>
   </div>
 
   <!-- ======================================================================
-       Question / Challenge Overlay (Audience Hook & Problem Statement)
+       Question / Challenge Overlay (Problem Introduction Screen)
        ====================================================================== -->
   <div id="question-overlay" class="hidden">
     <div class="question-backdrop-glow"></div>
-    <div class="question-container">
+    <div class="question-container asmr-card">
       <!-- Top header bar / Badge -->
       <div class="question-header">
         <div class="question-badge">
           <span class="badge-pulse"></span>
-          <span>🏭 INDUSTRIAL OPTIMIZATION • AUDIENCE CHALLENGE</span>
+          <span>📐 OPERATIONS RESEARCH • PROBLEM SELECTION</span>
         </div>
         <div class="question-header-actions">
           <div class="aspect-control-group" title="Projector Screen Ratio (Hotkey: A)">
@@ -66,158 +76,113 @@
               <button class="aspect-pill-btn" data-ratio="1:1" title="1:1 Square Projector">1:1</button>
             </div>
           </div>
-          <button id="question-back-btn" class="question-back-btn" title="Back to Intro Screen">
+          <button id="question-back-btn" class="question-back-btn asmr-btn" title="Back to Splash Screen">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
-            <span>Back to Intro</span>
+            <span>Back</span>
           </button>
         </div>
       </div>
 
       <!-- Main Headline -->
-      <h1 class="question-title">The Craftsman's Factory Dilemma</h1>
+      <h1 class="question-title">Dual Gomory Cutting Plane Formulations</h1>
       <p class="question-subtitle">
-        A custom furniture workshop needs to schedule production for maximum profit.
-        Every desk and chair consumes precious raw timber and skilled artisan labor.
+        Explore 3-dimensional optimization problems where naive continuous relaxation fails, requiring iterative Gomory cuts resolved via Dual Simplex.
       </p>
 
-      <!-- Visual Product Showcase & Resource Limits Grid -->
+      <!-- Problem Selection Cards Grid -->
       <div class="question-grid">
-        <!-- Product A: Desks -->
-        <div class="challenge-card product-desk">
+        <!-- Problem 1: H.W. 1 Pure Integer -->
+        <div class="challenge-card hw1-highlight-card asmr-card">
           <div class="card-glow"></div>
           <div class="card-icon-wrap">
-            <span class="product-emoji">🪑</span>
-            <span class="card-var-badge">Variable x₁</span>
+            <span class="product-emoji">💎</span>
+            <span class="card-var-badge">H.W. 1 • Pure Integer</span>
           </div>
-          <h3 class="card-product-name">Executive Desk</h3>
+          <h3 class="card-product-name">Pure Gomory Cutting Plane</h3>
           <div class="card-profit">
-            <span class="profit-val">+$200</span>
-            <span class="profit-lbl">Profit per desk</span>
+            <span class="profit-val">Max z = 3x₁ + x₂ + 3x₃</span>
+            <span class="profit-lbl">All x₁, x₂, x₃ ∈ ℤ₊</span>
           </div>
           <div class="card-requirements">
             <div class="req-row">
-              <span class="req-dot wood"></span>
-              <span class="req-label">Raw Wood:</span>
-              <strong class="req-val">2 Units</strong>
+              <span class="req-dot" style="background:#00f0ff;"></span>
+              <span class="req-label">Plane 1 (C₁):</span>
+              <strong class="req-val">−x₁ + 2x₂ + x₃ ≤ 4</strong>
             </div>
             <div class="req-row">
-              <span class="req-dot labor"></span>
-              <span class="req-label">Labor Time:</span>
-              <strong class="req-val">1 Hour</strong>
+              <span class="req-dot" style="background:#a855f7;"></span>
+              <span class="req-label">Plane 2 (C₂):</span>
+              <strong class="req-val">2x₂ − 1.5x₃ ≤ 1</strong>
+            </div>
+            <div class="req-row">
+              <span class="req-dot" style="background:#f59e0b;"></span>
+              <span class="req-label">Plane 3 (C₃):</span>
+              <strong class="req-val">x₁ − 3x₂ + 2x₃ ≤ 3</strong>
+            </div>
+            <div class="req-row" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 6px; margin-top: 6px;">
+              <span class="req-dot" style="background:#10b981;"></span>
+              <span class="req-label">Optimum:</span>
+              <strong class="req-val" style="color: #38ef7d;">(5, 2, 2) → Z = 23</strong>
             </div>
           </div>
         </div>
 
-        <!-- Product B: Chairs -->
-        <div class="challenge-card product-chair">
+        <!-- Problem 2: H.W. 2 Mixed Integer -->
+        <div class="challenge-card hw2-highlight-card asmr-card">
           <div class="card-glow"></div>
           <div class="card-icon-wrap">
-            <span class="product-emoji">🛋️</span>
-            <span class="card-var-badge">Variable x₂</span>
+            <span class="product-emoji">🔮</span>
+            <span class="card-var-badge" style="background: rgba(168,85,247,0.25); color:#d8b4fe;">H.W. 2 • Mixed Integer</span>
           </div>
-          <h3 class="card-product-name">Ergonomic Chair</h3>
+          <h3 class="card-product-name">Mixed Integer Algorithm</h3>
           <div class="card-profit">
-            <span class="profit-val">+$300</span>
-            <span class="profit-lbl">Profit per chair</span>
+            <span class="profit-val">Max z = 4x₁ + 6x₂ + 2x₃</span>
+            <span class="profit-lbl">x₁, x₃ ∈ ℤ₊, x₂ ∈ ℝ₊ (Continuous!)</span>
           </div>
           <div class="card-requirements">
             <div class="req-row">
-              <span class="req-dot wood"></span>
-              <span class="req-label">Raw Wood:</span>
-              <strong class="req-val">1 Unit</strong>
+              <span class="req-dot" style="background:#00f0ff;"></span>
+              <span class="req-label">Plane 1 (C₁):</span>
+              <strong class="req-val">4x₁ − 4x₂ ≤ 5</strong>
             </div>
             <div class="req-row">
-              <span class="req-dot labor"></span>
-              <span class="req-label">Labor Time:</span>
-              <strong class="req-val">2 Hours</strong>
+              <span class="req-dot" style="background:#a855f7;"></span>
+              <span class="req-label">Plane 2 (C₂):</span>
+              <strong class="req-val">−x₁ + 6x₂ ≤ 5</strong>
             </div>
-          </div>
-        </div>
-
-        <!-- Workshop Resources & Constraints Card -->
-        <div class="challenge-card workshop-limits">
-          <div class="card-glow"></div>
-          <div class="card-icon-wrap">
-            <span class="product-emoji">⚙️</span>
-            <span class="card-var-badge limits">Factory Ceilings</span>
-          </div>
-          <h3 class="card-product-name">Resource Ceilings</h3>
-          <div class="card-limits-list">
-            <div class="limit-box wood-box">
-              <div class="limit-box-header">
-                <span class="limit-title">🌲 Total Raw Lumber</span>
-                <span class="limit-badge">Max 5 Units</span>
-              </div>
-              <div class="limit-formula">2x₁ + 1x₂ ≤ 5</div>
+            <div class="req-row">
+              <span class="req-dot" style="background:#f59e0b;"></span>
+              <span class="req-label">Plane 3 (C₃):</span>
+              <strong class="req-val">−x₁ + x₂ + x₃ ≤ 5</strong>
             </div>
-            <div class="limit-box labor-box">
-              <div class="limit-box-header">
-                <span class="limit-title">⏱️ Artisan Assembly</span>
-                <span class="limit-badge">Max 5 Hours</span>
-              </div>
-              <div class="limit-formula">1x₁ + 2x₂ ≤ 5</div>
+            <div class="req-row" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 6px; margin-top: 6px;">
+              <span class="req-dot" style="background:#10b981;"></span>
+              <span class="req-label">Optimum:</span>
+              <strong class="req-val" style="color: #38ef7d;">(2, 1, 6) → Z = 26</strong>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- The Core Dilemma / Audience Hook Box -->
-      <div class="audience-challenge-box">
-        <div class="dilemma-header">
-          <div class="dilemma-tag">
-            <span class="pulse-icon">⚡</span>
-            <span>THE CORE QUESTION FOR THE AUDIENCE</span>
-          </div>
-          <div class="objective-formula">
-            <span class="obj-lbl">Target:</span>
-            <strong class="obj-math">Maximize Profit Z = 200x₁ + 300x₂</strong>
-          </div>
-        </div>
-        
-        <p class="challenge-prompt">
-          How many <strong>Desks (x₁)</strong> and <strong>Chairs (x₂)</strong> should we manufacture to maximize profit without violating raw lumber supply or artisan labor hours?
-        </p>
-
-        <div class="dilemma-twist-grid">
-          <div class="twist-col math-reality">
-            <div class="twist-badge error">⚠️ The Continuous LP Trap</div>
-            <p>
-              Standard continuous Simplex yields:
-              <br>
-              <strong>x₁ = 1.67 Desks, x₂ = 1.67 Chairs → Profit = $833.33</strong>
-            </p>
-          </div>
-          <div class="twist-arrow">VS</div>
-          <div class="twist-col physical-reality">
-            <div class="twist-badge success">🔨 Real-World Physical Reality</div>
-            <p>
-              <strong>You cannot sell 0.67 of a chair!</strong>
-              <br>
-              Production must be whole units: <strong>x₁, x₂ ∈ {0, 1, 2, ...}</strong>
-            </p>
-          </div>
-        </div>
-
-        <div class="question-callout">
-          Blindly rounding down to <strong>(1, 1)</strong> yields only <strong>$500</strong> — throwing away <strong>$333</strong>!
-          <em>Can cutting planes mathematically slice off the impossible fractions to unveil the true integer solution?</em>
-        </div>
+      <div class="question-callout">
+        Continuous LP relaxations yield fractions (x₁ = 16/3 in H.W. 1, x₃ = 25/4 in H.W. 2). 
+        <em>Gomory cuts iteratively slice off fractional peaks without touching integer points on the lattice!</em>
       </div>
 
       <!-- Call to Action Footer -->
       <div class="question-action-bar">
-        <button id="solve-problem-btn" class="solve-btn">
+        <button id="solve-problem-btn" class="solve-btn asmr-btn">
           <span class="solve-btn-glow"></span>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
             <path d="M8 5v14l11-7z"/>
           </svg>
-          <span>SOLVE PROBLEM</span>
+          <span>SOLVE IN 3D ENGINE</span>
         </button>
-        <div class="solve-hint">
-          Click or press <kbd>Enter</kbd> / <kbd>Space</kbd> to enter 3D Geometric Solver
-        </div>
+        <button id="intro-diff-btn" class="diff-secondary-btn asmr-btn">
+          <span>⚡ Review What Changed</span>
+        </button>
       </div>
     </div>
   </div>
@@ -231,20 +196,20 @@
       <div class="nav-left">
         <div class="logo-badge">
           <span style="color: var(--accent-cyan);">⚡</span>
-          <span>FURNITURE MAKER</span>
-          <span class="logo-tag">3D OPTIMIZER</span>
+          <span>GOMORY 3D</span>
+          <span class="logo-tag">OPTIMIZER</span>
         </div>
 
-        <!-- Method Switcher Tabs -->
+        <!-- Problem Switcher Tabs -->
         <div class="mode-tabs">
-          <button id="tab-simplex" class="mode-tab active" data-mode="simplex">
-            <span class="tab-full-label">Simplex Method (Continuous)</span>
-            <span class="tab-compact-label">Simplex</span>
+          <button id="tab-hw1" class="mode-tab active" data-mode="hw1" title="H.W. 1: Pure Gomory Cutting Plane (Hotkey: 1)">
+            <span class="tab-full-label">H.W. 1: Pure Gomory</span>
+            <span class="tab-compact-label">H.W. 1</span>
             <kbd>1</kbd>
           </button>
-          <button id="tab-gomory" class="mode-tab" data-mode="gomory">
-            <span class="tab-full-label">Gomory's Cutting Plane (ILP)</span>
-            <span class="tab-compact-label">Gomory Cut</span>
+          <button id="tab-hw2" class="mode-tab" data-mode="hw2" title="H.W. 2: Mixed Integer Algorithm (Hotkey: 2)">
+            <span class="tab-full-label">H.W. 2: Mixed Integer</span>
+            <span class="tab-compact-label">H.W. 2</span>
             <kbd>2</kbd>
           </button>
         </div>
@@ -252,265 +217,424 @@
 
       <!-- Step Progression Controls -->
       <div class="nav-center">
-        <button id="prev-step-btn" class="step-btn" title="Previous Step (Left Arrow)" disabled>
+        <button id="prev-step-btn" class="step-btn asmr-btn" title="Previous Step (Left Arrow)" disabled>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
         </button>
 
-        <div class="step-counter" id="step-counter-text">Step 1 / 8</div>
+        <div class="step-counter" id="step-counter-text">Tableau 1 / 8</div>
 
         <div class="step-progress-bar">
           <div class="step-progress-fill" id="step-progress-fill"></div>
         </div>
 
-        <button id="next-step-btn" class="step-btn" title="Next Step (Right Arrow)">
+        <button id="next-step-btn" class="step-btn asmr-btn" title="Next Step (Right Arrow)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </button>
       </div>
 
       <!-- Quick Action Utilities -->
       <div class="nav-right">
-        <!-- Projector Aspect Ratio Switcher (16:9 vs 1:1) -->
-        <div class="aspect-control-group" title="Projector Screen Ratio: 16:9 Widescreen or 1:1 Square (Hotkey: A)">
+        <!-- Font Size Scale Controls (A- / 100% / A+) -->
+        <div class="font-control-group" title="Adjust Presentation Font Size (Hotkeys: [ and ])">
+          <button id="font-dec-btn" class="font-btn asmr-btn" title="Decrease Font Size ([)">A−</button>
+          <button id="font-reset-btn" class="font-reset-btn asmr-btn" title="Reset Font Size (0)">100%</button>
+          <button id="font-inc-btn" class="font-btn asmr-btn" title="Increase Font Size (])">A+</button>
+        </div>
+
+        <!-- What Changed Button -->
+        <button id="diff-page-btn" class="tool-icon-btn diff-nav-btn asmr-btn" title="What Changed? Evolution from 2D Toy Model to 3D Gomory Systems (C)">
+          <span>⚡ What Changed?</span>
+          <kbd>C</kbd>
+        </button>
+
+        <!-- Projector Aspect Ratio Switcher (16:9 vs 1:1 Full-Bleed) -->
+        <div class="aspect-control-group" title="Projector Screen Ratio: 16:9 or 1:1 Full-Bleed Square (Hotkey: A)">
           <span class="aspect-group-label">PROJECTOR</span>
           <div class="aspect-pill-box">
             <button id="aspect-btn-169" class="aspect-pill-btn active" data-ratio="16:9" title="16:9 Widescreen Projector [A]">16:9</button>
-            <button id="aspect-btn-11" class="aspect-pill-btn" data-ratio="1:1" title="1:1 Square Projector [A]">1:1</button>
+            <button id="aspect-btn-11" class="aspect-pill-btn" data-ratio="1:1" title="1:1 Square Projector (Full-Bleed) [A]">1:1</button>
           </div>
         </div>
 
-        <button id="ineq-graph-btn" class="tool-icon-btn" title="Open 2D Inequality Graph (G or I)" style="border-color: rgba(0, 240, 255, 0.4); background: rgba(0, 240, 255, 0.08);">
-          <span>📈 2D Graph</span>
-          <kbd style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-cyan);">G</kbd>
-        </button>
-        <button id="audience-quiz-btn" class="tool-icon-btn audience-quiz-nav-btn" title="Final Question: Roll Call Student 1-61 (Q)" style="border-color: rgba(255, 215, 0, 0.45); background: rgba(255, 215, 0, 0.1);">
+        <!-- Roll Call Button -->
+        <button id="audience-quiz-btn" class="tool-icon-btn audience-quiz-nav-btn asmr-btn" title="Audience Defense & Roll Call (Q)">
           <span style="color: #ffd700;">🎯 Roll Call (1-61)</span>
-          <kbd style="font-family: var(--font-mono); font-size: 10px; color: #ffd700;">Q</kbd>
+          <kbd style="color: #ffd700; border-color: rgba(255, 215, 0, 0.5);">Q</kbd>
         </button>
-        <button id="guide-btn" class="tool-icon-btn" title="Jump to 3D Construction Walkthrough">
-          <span>📐 3D Guide</span>
-        </button>
-        <button id="reset-btn" class="tool-icon-btn" title="Reset to Start (R)">
+
+        <button id="reset-btn" class="tool-icon-btn asmr-btn" title="Reset to Step 0 (R)">
           <span>↺ Reset</span>
-          <kbd style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);">R</kbd>
+          <kbd>R</kbd>
         </button>
-        <button id="sound-toggle-btn" class="tool-icon-btn" title="Toggle Sound FX (M)">
-          <span id="sound-icon">🔊</span>
-          <span>SFX</span>
+        <button id="sound-toggle-btn" class="tool-icon-btn asmr-btn" title="Toggle ASMR Sound FX (M)">
+          <span id="sound-icon">🎧</span>
+          <span>ASMR SFX</span>
         </button>
-        <button id="help-btn" class="tool-icon-btn" title="Keyboard Shortcuts (?)">
-          <span>⌨ Keys</span>
+        <!-- Audience Live Reactions & Soundboard Button -->
+        <button id="soundboard-toggle-btn" class="tool-icon-btn audience-soundboard-btn asmr-btn" title="Audience Live Reactions & Presenter Soundboard (Hotkey: B)">
+          <span style="color: #ec4899;">🎉 FX Bar</span>
+          <kbd>B</kbd>
         </button>
-        <button id="fullscreen-btn" class="tool-icon-btn" title="Toggle Fullscreen (F)">
-          <span id="fullscreen-icon">⛶</span>
-          <span>Fullscreen</span>
+
+        <button id="help-btn" class="tool-icon-btn asmr-btn" title="Keyboard Shortcuts (?)">
+          <span>⌨ Shortcuts</span>
+          <kbd>?</kbd>
+        </button>
+        <button id="fullscreen-btn" class="tool-icon-btn asmr-btn" title="Toggle Fullscreen (F)">
+          <span>⛶</span>
         </button>
       </div>
     </header>
 
-    <!-- Split Screen: Left 3D Viewport, Right Narrative Steps -->
-    <main class="main-split">
-      <!-- Left 3D Viewport -->
+    <!-- Floating Audience Reactions & Presenter Soundboard Bar -->
+    <div id="audience-soundboard-bar" class="audience-soundboard-bar asmr-card hidden">
+      <div class="soundboard-title">
+        <span>🎉 AUDIENCE REACTION FX SOUNDBOARD</span>
+        <button id="close-soundboard-btn" class="soundboard-close-btn asmr-btn">✕</button>
+      </div>
+      <div class="soundboard-buttons">
+        <button class="soundboard-item-btn asmr-btn" data-fx="applause" title="Audience Applause & Cheer (Hotkey: 3)">
+          <span class="sb-icon">👏</span>
+          <span class="sb-name">Cheer</span>
+          <kbd>3</kbd>
+        </button>
+        <button class="soundboard-item-btn asmr-btn" data-fx="drumroll" title="Suspense Drum Roll (Hotkey: 4)">
+          <span class="sb-icon">🥁</span>
+          <span class="sb-name">Drumroll</span>
+          <kbd>4</kbd>
+        </button>
+        <button class="soundboard-item-btn asmr-btn" data-fx="buzzer" title="Game Show Wrong Buzzer (Hotkey: 5)">
+          <span class="sb-icon">❌</span>
+          <span class="sb-name">Buzzer</span>
+          <kbd>5</kbd>
+        </button>
+        <button class="soundboard-item-btn asmr-btn" data-fx="eureka" title="Eureka Insight Chime (Hotkey: 6)">
+          <span class="sb-icon">💡</span>
+          <span class="sb-name">Eureka</span>
+          <kbd>6</kbd>
+        </button>
+        <button class="soundboard-item-btn asmr-btn" data-fx="laser" title="Cutting Plane Laser Blast (Hotkey: 7)">
+          <span class="sb-icon">⚡</span>
+          <span class="sb-name">Laser Cut</span>
+          <kbd>7</kbd>
+        </button>
+        <button class="soundboard-item-btn asmr-btn" data-fx="confetti" title="Triumphant Confetti Shower (Hotkey: 8)">
+          <span class="sb-icon">🎊</span>
+          <span class="sb-name">Confetti</span>
+          <kbd>8</kbd>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content Area: Split 3D Viewport & Right Narrative Pane -->
+    <main class="main-split" id="main-split">
+      <!-- Left 3D Viewport Pane -->
       <section id="viewport-container">
-        <!-- Unity-style Scene View Gizmo Overlay -->
-        <div class="unity-gizmo-box" title="Click cones to snap camera!">
-          <canvas id="unity-gizmo-canvas"></canvas>
-          <div class="gizmo-label" id="gizmo-proj-label">⋖ Persp</div>
+        <!-- Interactive Unity View Controls (Upper Left) -->
+        <div class="viewport-overlay-controls">
+          <div class="control-group">
+            <button class="cam-btn active asmr-btn" data-view="perspective">Perspective</button>
+            <button class="cam-btn asmr-btn" data-view="top">Top (2D)</button>
+            <button class="cam-btn asmr-btn" data-view="front">Front (x₁-x₃)</button>
+            <button class="cam-btn asmr-btn" data-view="side">Side (x₂-x₃)</button>
+            <button class="cam-btn asmr-btn" data-view="focus">Focus Vertex</button>
+            <button class="cam-btn asmr-btn auto-rotate-btn" id="auto-rotate-btn" title="Toggle 3D Auto-Rotation (Hotkey: O)"><span class="rotate-icon">⟳</span> Auto-Rotate</button>
+            <button class="cam-btn asmr-btn exploded-view-btn" id="exploded-view-btn" title="3D Polytope Exploded Disassembly (Hotkey: E)">💥 Explode</button>
+            <button class="cam-btn asmr-btn laser-slice-btn" id="laser-slice-btn" title="Execute Cutting Plane Laser Slice FX (Hotkey: L)">⚡ Laser Cut</button>
+          </div>
         </div>
 
-        <!-- 3D Plane & Boundary Index Box with Individual Toggle Controls -->
-        <div class="plane-index-box" id="plane-index-box">
+        <!-- 3D Plane Index Controls (Right Side in Viewport) -->
+        <div class="plane-index-box asmr-card" id="plane-index-box">
           <div class="index-box-header" id="index-box-header">
-            <div class="index-header-left">
-              <span class="index-header-icon">📐</span>
-              <span class="index-header-title">3D Plane Index</span>
-              <span class="index-count-badge" id="index-active-count">0/9</span>
-            </div>
+            <span class="index-box-title">3D Plane Index</span>
+            <span class="index-active-count" id="index-active-count">Active</span>
             <div class="index-header-actions">
-              <button class="index-action-btn" id="index-toggle-all-btn" title="Toggle All Planes On/Off">Toggle All</button>
-              <button class="index-collapse-btn" id="index-collapse-btn" title="Minimize / Expand Index">▾</button>
+              <button class="index-header-btn asmr-btn" id="index-toggle-all-btn" title="Toggle All Planes">All</button>
+              <button class="index-header-btn asmr-btn" id="index-collapse-btn" title="Collapse Box">−</button>
             </div>
           </div>
-          <div class="index-box-body" id="index-box-body">
-            <!-- Non-Negativity Chamber Boundaries -->
-            <div class="index-section-title">Chamber Boundaries (1st Octant)</div>
-            <div class="index-item" data-plane="nonNegX1">
-              <div class="index-item-info">
-                <span class="index-color-dot" style="background: #38bdf8; box-shadow: 0 0 6px #38bdf8;"></span>
-                <div class="index-name-wrap">
-                  <span class="index-plane-name">x₁ ≥ 0 Wall</span>
-                  <span class="index-plane-sub">Desk Bound (x₁ = 0)</span>
-                </div>
-              </div>
-              <button class="plane-switch" data-plane="nonNegX1" role="switch" aria-checked="false">
-                <span class="switch-slider"></span>
-              </button>
-            </div>
 
-            <div class="index-item" data-plane="nonNegX2">
-              <div class="index-item-info">
-                <span class="index-color-dot" style="background: #f43f5e; box-shadow: 0 0 6px #f43f5e;"></span>
-                <div class="index-name-wrap">
-                  <span class="index-plane-name">x₂ ≥ 0 Wall</span>
-                  <span class="index-plane-sub">Chair Bound (x₂ = 0)</span>
-                </div>
-              </div>
-              <button class="plane-switch" data-plane="nonNegX2" role="switch" aria-checked="false">
-                <span class="switch-slider"></span>
-              </button>
-            </div>
-
-            <div class="index-item" data-plane="nonNegZ">
-              <div class="index-item-info">
-                <span class="index-color-dot" style="background: #10b981; box-shadow: 0 0 6px #10b981;"></span>
-                <div class="index-name-wrap">
-                  <span class="index-plane-name">Z ≥ 0 Floor</span>
-                  <span class="index-plane-sub">Base Elevation (Z = 0)</span>
-                </div>
-              </div>
-              <button class="plane-switch" data-plane="nonNegZ" role="switch" aria-checked="false">
-                <span class="switch-slider"></span>
-              </button>
-            </div>
-
-            <!-- Resource Constraints & Polytope -->
-            <div class="index-section-title">Constraints & Feasible Polytope</div>
-            <div class="index-item" data-plane="wood">
+          <div class="index-items-list" id="index-items-list">
+            <!-- Plane 1 -->
+            <div class="index-item" data-plane="plane1">
               <div class="index-item-info">
                 <span class="index-color-dot" style="background: #00f0ff; box-shadow: 0 0 6px #00f0ff;"></span>
                 <div class="index-name-wrap">
-                  <span class="index-plane-name">Wood Plane</span>
-                  <span class="index-plane-sub">2x₁ + 1x₂ = 5 (≤ 5)</span>
+                  <span class="index-plane-name" id="index-p1-title">Plane 1 (C₁)</span>
+                  <span class="index-plane-sub" id="index-p1-sub">−x₁ + 2x₂ + x₃ ≤ 4</span>
                 </div>
               </div>
-              <button class="plane-switch" data-plane="wood" role="switch" aria-checked="false">
+              <button class="plane-switch asmr-btn" data-plane="plane1" role="switch" aria-checked="true">
                 <span class="switch-slider"></span>
               </button>
             </div>
 
-            <div class="index-item" data-plane="labor">
+            <!-- Plane 2 -->
+            <div class="index-item" data-plane="plane2">
               <div class="index-item-info">
                 <span class="index-color-dot" style="background: #a855f7; box-shadow: 0 0 6px #a855f7;"></span>
                 <div class="index-name-wrap">
-                  <span class="index-plane-name">Labor Plane</span>
-                  <span class="index-plane-sub">1x₁ + 2x₂ = 5 (≤ 5)</span>
+                  <span class="index-plane-name" id="index-p2-title">Plane 2 (C₂)</span>
+                  <span class="index-plane-sub" id="index-p2-sub">2x₂ − 1.5x₃ ≤ 1</span>
                 </div>
               </div>
-              <button class="plane-switch" data-plane="labor" role="switch" aria-checked="false">
+              <button class="plane-switch asmr-btn" data-plane="plane2" role="switch" aria-checked="true">
                 <span class="switch-slider"></span>
               </button>
             </div>
 
-            <div class="index-item" data-plane="polyhedron">
+            <!-- Plane 3 -->
+            <div class="index-item" data-plane="plane3">
               <div class="index-item-info">
-                <span class="index-color-dot" style="background: #10b981; box-shadow: 0 0 6px #10b981;"></span>
+                <span class="index-color-dot" style="background: #f59e0b; box-shadow: 0 0 6px #f59e0b;"></span>
                 <div class="index-name-wrap">
-                  <span class="index-plane-name">Feasible Polyhedron</span>
-                  <span class="index-plane-sub">3D Continuous Crystal</span>
+                  <span class="index-plane-name" id="index-p3-title">Plane 3 (C₃)</span>
+                  <span class="index-plane-sub" id="index-p3-sub">x₁ − 3x₂ + 2x₃ ≤ 3</span>
                 </div>
               </div>
-              <button class="plane-switch" data-plane="polyhedron" role="switch" aria-checked="false">
+              <button class="plane-switch asmr-btn" data-plane="plane3" role="switch" aria-checked="true">
                 <span class="switch-slider"></span>
               </button>
             </div>
 
-            <div class="index-item" data-plane="objective">
-              <div class="index-item-info">
-                <span class="index-color-dot" style="background: #34d399; box-shadow: 0 0 6px #34d399;"></span>
-                <div class="index-name-wrap">
-                  <span class="index-plane-name">Objective Ceiling</span>
-                  <span class="index-plane-sub">Z = 2x₁ + 3x₂</span>
-                </div>
-              </div>
-              <button class="plane-switch" data-plane="objective" role="switch" aria-checked="false">
-                <span class="switch-slider"></span>
-              </button>
-            </div>
-
-            <!-- ILP Gomory & Lattice -->
-            <div class="index-section-title">Integer Programming (ILP)</div>
-            <div class="index-item" data-plane="cut">
+            <!-- Cut 1 -->
+            <div class="index-item" data-plane="cut1">
               <div class="index-item-info">
                 <span class="index-color-dot" style="background: #ff0055; box-shadow: 0 0 6px #ff0055;"></span>
                 <div class="index-name-wrap">
-                  <span class="index-plane-name">Gomory Cut</span>
-                  <span class="index-plane-sub">1x₁ + 1x₂ = 3 (≤ 3)</span>
+                  <span class="index-plane-name" id="index-cut1-title">Gomory Cut 1 (G₁)</span>
+                  <span class="index-plane-sub" id="index-cut1-sub">2x₂ − x₃ ≤ 2</span>
                 </div>
               </div>
-              <button class="plane-switch" data-plane="cut" role="switch" aria-checked="false">
+              <button class="plane-switch asmr-btn" data-plane="cut1" role="switch" aria-checked="false">
                 <span class="switch-slider"></span>
               </button>
             </div>
 
+            <!-- Cut 2 -->
+            <div class="index-item" data-plane="cut2">
+              <div class="index-item-info">
+                <span class="index-color-dot" style="background: #38ef7d; box-shadow: 0 0 6px #38ef7d;"></span>
+                <div class="index-name-wrap">
+                  <span class="index-plane-name" id="index-cut2-title">Gomory Cut 2 (G₂)</span>
+                  <span class="index-plane-sub" id="index-cut2-sub">x₃ ≤ 2</span>
+                </div>
+              </div>
+              <button class="plane-switch asmr-btn" data-plane="cut2" role="switch" aria-checked="false">
+                <span class="switch-slider"></span>
+              </button>
+            </div>
+
+            <!-- 3D Integer Lattice -->
             <div class="index-item" data-plane="lattice">
               <div class="index-item-info">
                 <span class="index-color-dot" style="background: #ffd700; box-shadow: 0 0 6px #ffd700;"></span>
                 <div class="index-name-wrap">
                   <span class="index-plane-name">Integer Lattice</span>
-                  <span class="index-plane-sub">Grid (x₁, x₂) ∈ ℤ²</span>
+                  <span class="index-plane-sub">(x₁, x₂, x₃) ∈ ℤ³</span>
                 </div>
               </div>
-              <button class="plane-switch" data-plane="lattice" role="switch" aria-checked="false">
+              <button class="plane-switch asmr-btn" data-plane="lattice" role="switch" aria-checked="true">
                 <span class="switch-slider"></span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Viewport Floating HUD Readout -->
+        <!-- 3D HUD Readouts -->
         <div class="viewport-hud">
-          <div class="hud-pill coords-hud">
+          <div class="hud-pill coords-hud asmr-card">
+            <div class="hud-telemetry-badge"><span>●</span> SPATIAL COORDINATES</div>
             <div class="coord-item">
-              <span class="coord-label">Desks x₁:</span>
+              <span class="coord-dot x1"></span>
+              <span class="coord-label">x₁:</span>
               <span class="coord-val x1" id="hud-x1">0.00</span>
             </div>
             <div class="coord-item">
-              <span class="coord-label">Chairs x₂:</span>
+              <span class="coord-dot x2"></span>
+              <span class="coord-label">x₂:</span>
               <span class="coord-val x2" id="hud-x2">0.00</span>
             </div>
             <div class="coord-item">
-              <span class="coord-label">Scaled Z:</span>
-              <span class="coord-val z" id="hud-z">0.00</span>
+              <span class="coord-dot x3"></span>
+              <span class="coord-label">x₃:</span>
+              <span class="coord-val x3" id="hud-x3">0.00</span>
             </div>
-            <div class="coord-item">
-              <span class="coord-label">Total Profit:</span>
-              <span class="coord-val profit" id="hud-dollar">$0</span>
+            <div class="coord-item coord-profit-wrap">
+              <span class="coord-dot profit"></span>
+              <span class="coord-val profit" id="hud-dollar">Z = 0.00</span>
             </div>
           </div>
+        </div>
 
-          <div class="hud-pill camera-views-hud">
-            <button class="cam-btn" data-view="perspective">Perspective</button>
-            <button class="cam-btn" data-view="top">Top (2D)</button>
-            <button class="cam-btn" data-view="front">Front (x₁-Z)</button>
-            <button class="cam-btn" data-view="side">Side (x₂-Z)</button>
-            <button class="cam-btn" data-view="focus">Focus Point</button>
+        <!-- 3D Integer Lattice Holographic Raycaster Inspector HUD -->
+        <div id="lattice-inspector-hud" class="lattice-inspector-hud asmr-card hidden">
+          <div class="hud-inspector-header">
+            <span class="hud-lattice-glow-dot"></span>
+            <div class="hud-inspector-coords-wrap">
+              <span class="hud-inspector-title">Integer Lattice Point</span>
+              <span class="hud-point-coords" id="hud-point-coords">(5, 2, 2)</span>
+            </div>
+            <span class="hud-point-badge" id="hud-point-badge">OPTIMUM</span>
+          </div>
+          <div class="hud-inspector-body">
+            <div class="hud-metric-row">
+              <span class="hud-metric-label">Objective Value Z:</span>
+              <strong class="hud-metric-val" id="hud-point-z">23.00</strong>
+            </div>
+            <div class="hud-constraints-check-list" id="hud-point-checks">
+              <div class="check-item pass">Plane 1 (C₁): −x₁ + 2x₂ + x₃ ≤ 4 ✓</div>
+              <div class="check-item pass">Plane 2 (C₂): 4x₂ − 3x₃ ≤ 2 ✓</div>
+              <div class="check-item pass">Plane 3 (C₃): x₁ − 3x₂ + 2x₃ ≤ 3 ✓</div>
+            </div>
           </div>
         </div>
       </section>
 
+      <!-- Interactive Snap Divider Splitter -->
+      <div id="split-divider" class="split-divider" title="Drag to resize panes • Double click to snap default • Magnetic snap to 30%, 50%, 70%">
+        <div class="divider-handle">
+          <div class="divider-grip-dot"></div>
+          <div class="divider-grip-dot"></div>
+          <div class="divider-grip-dot"></div>
+        </div>
+        <div class="divider-snap-tooltip" id="divider-snap-tooltip">55% / 45%</div>
+      </div>
+
       <!-- Right Narrative Scrollable Pane -->
       <section id="steps-container">
-        <!-- Dynamically populated step cards -->
+        <!-- Dynamically populated 8 Tableau cards -->
       </section>
     </main>
+  </div>
+
+  <!-- ======================================================================
+       "What's Different?" Comparison Modal (Method Evolution Guide)
+       ====================================================================== -->
+  <div id="diff-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="diff-modal-title">
+    <div class="modal-backdrop"></div>
+    <div class="diff-modal-container asmr-card">
+      <div class="diff-modal-header">
+        <div class="diff-title-wrap">
+          <span class="diff-sparkle-badge">⚡ METHOD EVOLUTION</span>
+          <h2 id="diff-modal-title">What Changed: Toy Model vs. Real 3D Gomory Systems</h2>
+          <p class="diff-subtitle">Comprehensive mathematical breakdown comparing the previous 2D toy model with the new course homework formulations.</p>
+        </div>
+        <button id="close-diff-btn" class="diff-close-btn asmr-btn" title="Close Comparison (Esc)">✕</button>
+      </div>
+
+      <div class="diff-modal-body">
+        <!-- Comparison Table -->
+        <div class="diff-table-wrapper">
+          <table class="diff-comparison-table">
+            <thead>
+              <tr>
+                <th>Feature / Metric</th>
+                <th>Previous 2D Model</th>
+                <th>New H.W. 1: Pure Gomory</th>
+                <th>New H.W. 2: Mixed Integer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Dimension</strong></td>
+                <td>2 Variables (x₁, x₂), Z as elevation</td>
+                <td><strong style="color:#00f0ff;">3 Spatial Variables</strong> (x₁, x₂, x₃)</td>
+                <td><strong style="color:#a855f7;">3 Mixed Variables</strong> (x₁, x₃ ∈ ℤ, x₂ ∈ ℝ)</td>
+              </tr>
+              <tr>
+                <td><strong>Objective Function</strong></td>
+                <td>Max Z = 2x₁ + 3x₂</td>
+                <td><strong style="color:#00f0ff;">Max z = 3x₁ + x₂ + 3x₃</strong></td>
+                <td><strong style="color:#a855f7;">Max z = 4x₁ + 6x₂ + 2x₃</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Constraints</strong></td>
+                <td>2 Constraints (Wood & Labor)</td>
+                <td>3 Resource Hyperplanes in ℝ³</td>
+                <td>3 Continuous Hyperplanes in ℝ³</td>
+              </tr>
+              <tr>
+                <td><strong>Step Progression</strong></td>
+                <td>3 basic steps</td>
+                <td><strong style="color:#38ef7d;">5 3D Graph Steps + 8 Tableaus (14 Steps)</strong></td>
+                <td><strong style="color:#38ef7d;">5 3D Graph Steps + 8 Tableaus (14 Steps)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Gomory Cuts</strong></td>
+                <td>1 simple cut (x₁ + x₂ ≤ 3)</td>
+                <td><strong>2 Iterative Cuts (G₁, G₂)</strong> via Dual Simplex</td>
+                <td><strong>2 Mixed Cuts (G₁, G₂)</strong> with f₀ / (1 − f₀) multiplier</td>
+              </tr>
+              <tr>
+                <td><strong>Optimal Solution</strong></td>
+                <td>(1, 2) → Z = $800</td>
+                <td><strong style="color:#38ef7d;">(5, 2, 2) → Z = 23</strong></td>
+                <td><strong style="color:#38ef7d;">(2, 1, 6) → Z = 26</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 3 Pillars of Mathematical Advancement -->
+        <div class="diff-cards-grid">
+          <div class="diff-pillar-card asmr-card">
+            <div class="pillar-icon">📐</div>
+            <h4>1. True 3-Dimensional Spatial Polytope</h4>
+            <p>Moving from a 2D floor drawing to genuine 3D hyperplanes (−x₁ + 2x₂ + x₃ ≤ 4, etc.). The feasible space is a multi-faceted 3D crystal whose vertices Simplex traverses.</p>
+          </div>
+
+          <div class="diff-pillar-card asmr-card">
+            <div class="pillar-icon">✂️</div>
+            <h4>2. Multi-Cut Architecture & Dual Simplex</h4>
+            <p>Single cuts are rarely sufficient in practice. H.W. 1 demonstrates how Cut 1 (G₁) introduces negative RHS (P₀ = −1/3), triggering Dual Simplex, followed by Cut 2 (G₂).</p>
+          </div>
+
+          <div class="diff-pillar-card asmr-card">
+            <div class="pillar-icon">🔮</div>
+            <h4>3. Mixed Integer Disjunctions (MILP)</h4>
+            <p>H.W. 2 models real industrial engineering where raw materials are continuous (x₂ ∈ ℝ) while manufactured products (x₁, x₃ ∈ ℤ) are discrete, using the ratio multiplier f₀ / (1 − f₀).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="diff-modal-footer">
+        <button id="launch-hw1-btn" class="diff-launch-btn hw1 asmr-btn">Explore H.W. 1 (Pure Gomory) →</button>
+        <button id="launch-hw2-btn" class="diff-launch-btn hw2 asmr-btn">Explore H.W. 2 (Mixed Integer) →</button>
+      </div>
+    </div>
   </div>
 
   <!-- ======================================================================
        Keyboard Shortcuts Modal
        ====================================================================== -->
   <div id="shortcuts-modal">
-    <div class="modal-box">
+    <div class="modal-box asmr-card">
       <h3 class="modal-title">Presentation Hotkeys</h3>
       <div class="shortcut-list">
         <div class="shortcut-row">
-          <span>Switch to Simplex Method</span>
-          <div class="shortcut-keys"><kbd>1</kbd> / <kbd>S</kbd></div>
+          <span>Switch to H.W. 1: Pure Gomory</span>
+          <div class="shortcut-keys"><kbd>1</kbd></div>
         </div>
         <div class="shortcut-row">
-          <span>Switch to Gomory Cutting Plane</span>
-          <div class="shortcut-keys"><kbd>2</kbd> / <kbd>C</kbd> / <kbd>G</kbd></div>
+          <span>Switch to H.W. 2: Mixed Integer</span>
+          <div class="shortcut-keys"><kbd>2</kbd></div>
         </div>
         <div class="shortcut-row">
-          <span>Next Step / Advance</span>
+          <span>What Changed? (Method Comparison)</span>
+          <div class="shortcut-keys"><kbd>C</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Increase / Decrease Font Size</span>
+          <div class="shortcut-keys"><kbd>[</kbd> / <kbd>]</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Reset Font Size to 100%</span>
+          <div class="shortcut-keys"><kbd>0</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Next Step / Advance Tableau</span>
           <div class="shortcut-keys"><kbd>→</kbd> / <kbd>Space</kbd> / <kbd>Enter</kbd></div>
         </div>
         <div class="shortcut-row">
@@ -518,39 +642,55 @@
           <div class="shortcut-keys"><kbd>←</kbd> / <kbd>Backspace</kbd></div>
         </div>
         <div class="shortcut-row">
+          <span>Projector Ratio (16:9 / 1:1 Full-Bleed)</span>
+          <div class="shortcut-keys"><kbd>A</kbd></div>
+        </div>
+        <div class="shortcut-row">
           <span>Toggle Fullscreen</span>
           <div class="shortcut-keys"><kbd>F</kbd></div>
         </div>
         <div class="shortcut-row">
-          <span>Projector Ratio (16:9 / 1:1)</span>
-          <div class="shortcut-keys"><kbd>A</kbd></div>
-        </div>
-        <div class="shortcut-row">
-          <span>Reset Current Method</span>
+          <span>Reset to Tableau 1</span>
           <div class="shortcut-keys"><kbd>R</kbd></div>
         </div>
         <div class="shortcut-row">
-          <span>Toggle 2D Inequality Graph</span>
-          <div class="shortcut-keys"><kbd>G</kbd> / <kbd>I</kbd></div>
-        </div>
-        <div class="shortcut-row">
-          <span>Top-Down (2D Decision Plane)</span>
-          <div class="shortcut-keys"><kbd>T</kbd></div>
-        </div>
-        <div class="shortcut-row">
-          <span>3D Perspective View</span>
-          <div class="shortcut-keys"><kbd>P</kbd></div>
-        </div>
-        <div class="shortcut-row">
-          <span>Toggle Sound Effects</span>
+          <span>Toggle ASMR Sound Effects</span>
           <div class="shortcut-keys"><kbd>M</kbd></div>
         </div>
+        <div class="shortcut-row">
+          <span>Toggle 3D Auto-Rotation</span>
+          <div class="shortcut-keys"><kbd>O</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>3D Polytope Exploded Disassembly</span>
+          <div class="shortcut-keys"><kbd>E</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Execute Laser Cut Slice FX</span>
+          <div class="shortcut-keys"><kbd>L</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Audience Reactions Soundboard</span>
+          <div class="shortcut-keys"><kbd>B</kbd> / <kbd>3</kbd>-<kbd>8</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Phone / Parsec Slide Navigation</span>
+          <div class="shortcut-keys"><span>Swipe ⇦ / ⇨</span></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Fullscreen 2-Finger Pinch Zoom</span>
+          <div class="shortcut-keys"><span>Pinch In / Out</span></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Snap Divider (Resize 3D / Text)</span>
+          <div class="shortcut-keys"><span>Drag / Dbl-Click</span></div>
+        </div>
         <div class="shortcut-row" style="background: rgba(255, 215, 0, 0.08); border-radius: 4px; padding: 4px 6px;">
-          <span style="color: #ffd700; font-weight: 600;">🎯 Final Audience Quiz (Roll Call 1-61)</span>
+          <span style="color: #ffd700; font-weight: 600;">🎯 Audience Defense (Roll Call 1-61)</span>
           <div class="shortcut-keys"><kbd style="color: #ffd700; border-color: rgba(255, 215, 0, 0.5);">Q</kbd></div>
         </div>
       </div>
-      <button id="modal-close-btn" class="modal-close-btn">Close (Esc)</button>
+      <button id="modal-close-btn" class="modal-close-btn asmr-btn">Close (Esc)</button>
     </div>
   </div>
 
@@ -559,7 +699,7 @@
        ====================================================================== -->
   <div id="audience-quiz-overlay" class="audience-quiz-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="quiz-modal-title">
     <div class="quiz-backdrop"></div>
-    <div class="audience-quiz-container">
+    <div class="audience-quiz-container asmr-card">
       <!-- Quiz Overlay Header -->
       <header class="quiz-header">
         <div class="quiz-header-left">
@@ -575,7 +715,7 @@
           </p>
         </div>
         <div class="quiz-header-right">
-          <button id="close-audience-quiz-btn" class="quiz-exit-btn" title="Back to 3D Optimizer (Esc)">
+          <button id="close-audience-quiz-btn" class="quiz-exit-btn asmr-btn" title="Back to 3D Optimizer (Esc)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
             <span>Exit [Esc]</span>
           </button>
@@ -585,7 +725,7 @@
       <!-- Main Stage Split: Controls & Real-Time Clock on Top -->
       <div class="quiz-control-station">
         <!-- Live Hardware Entropy Clock -->
-        <div class="entropy-clock-card">
+        <div class="entropy-clock-card asmr-card">
           <div class="clock-meta-bar">
             <div class="clock-live-indicator">
               <span class="live-dot" id="clock-live-dot"></span>
@@ -615,8 +755,8 @@
         </div>
 
         <!-- The Big Thrilling Generate Button -->
-        <div class="roll-trigger-card">
-          <button id="generate-random-btn" class="generate-random-btn">
+        <div class="roll-trigger-card asmr-card">
+          <button id="generate-random-btn" class="generate-random-btn asmr-btn">
             <span class="btn-glow-ring"></span>
             <span class="btn-laser-sweep"></span>
             <div class="btn-content">
@@ -634,14 +774,14 @@
       <!-- Theater Body: Left Terminal & Right Reveal/Question Card -->
       <div class="quiz-theater-grid">
         <!-- Left: Letter-by-Letter Hash Calculation Terminal -->
-        <div class="quiz-terminal-panel">
+        <div class="quiz-terminal-panel asmr-card">
           <div class="panel-header">
             <div class="panel-dots">
               <span class="dot red"></span>
               <span class="dot yellow"></span>
               <span class="dot green"></span>
             </div>
-            <span class="panel-title">TERMINAL: DIVERGENT CRYPTO-HASH ENGINE</span>
+            <span class="panel-title">TERMINAL: CRYPTO-HASH ENGINE</span>
             <span class="panel-state-tag" id="terminal-state-tag">STANDBY</span>
           </div>
           <div class="terminal-body" id="hash-terminal-body">
@@ -656,7 +796,7 @@
         </div>
 
         <!-- Right: Reveal Showcase & Selected Question Card -->
-        <div class="quiz-results-panel">
+        <div class="quiz-results-panel asmr-card">
           <!-- Big Roll Number Tumbler Display -->
           <div class="roll-reveal-box" id="roll-reveal-box">
             <div class="reveal-top-label">
@@ -673,31 +813,31 @@
           </div>
 
           <!-- Question Challenge Card for the Selected Student -->
-          <div class="student-question-card" id="student-question-card">
+          <div class="student-question-card asmr-card" id="student-question-card">
             <div class="question-card-header">
               <div class="q-badge" id="q-number-badge">QUESTION 1 OF 4</div>
-              <button id="next-question-btn" class="next-q-btn" title="Cycle to next question in bank">
+              <button id="next-question-btn" class="next-q-btn asmr-btn" title="Cycle to next question in bank">
                 <span>🔄 Next Question</span>
               </button>
             </div>
 
             <h3 class="q-main-title" id="q-main-title">
-              "Why did blind rounding (1.67, 1.67) down to (1, 1) yield only $500, while Gomory found (1, 2) giving $800?"
+              "In H.W. 1 Table 4, continuous LP yields x₁ = 16/3 and x₃ = 10/3 (Z = 29). Why does naive integer rounding fail compared to Gomory's Cutting Plane?"
             </h3>
 
             <p class="q-sub-detail" id="q-sub-detail">
-              Target Student: Analyze the 3D feasible polyhedron. How does discrete manufacturing differ from fractional linear programming?
+              Topic: Pure Integer Cutting Plane vs Naive Rounding. How does continuous relaxation overshoot discrete manufacturability?
             </p>
 
             <!-- Presenter Key / Reveal Accordion -->
             <div class="presenter-key-accordion">
-              <button id="toggle-key-btn" class="key-accordion-btn">
+              <button id="toggle-key-btn" class="key-accordion-btn asmr-btn">
                 <span class="key-icon">💡</span>
                 <span>Show Presenter Answer Key</span>
                 <span class="key-arrow" id="key-arrow">▼</span>
               </button>
               <div class="key-answer-box hidden" id="key-answer-box">
-                <p><strong>Official Model Answer:</strong> Blind rounding down to (1, 1) leaves 1 unit of lumber and 2 hours of labor unused, throwing away $300! Point (1, 2) is completely integer, utilizes 4/5 wood and 100% labor, maximizing profit to $800. Gomory's cut sliced away fractional vertices without deleting (1, 2).</p>
+                <p><strong>Official Model Answer:</strong> Continuous LP optimum (16/3, 3, 10/3) gives fractional values. Rounding down violates constraint boundaries (e.g. 2x₂ − 1.5x₃ = 1.5 > 1). Gomory's cutting planes systematically slice away fractional space without deleting integer lattice points, discovering the true integer peak (5, 2, 2) with Z = 23.</p>
               </div>
             </div>
           </div>
@@ -705,6 +845,12 @@
       </div>
     </div>
   </div>
+
+  <!-- Mobile & Parsec Swipe Navigation Feedback Toast -->
+  <div id="swipe-feedback-toast" class="swipe-feedback-toast hidden"></div>
+
+  <!-- Floating Live Audience Reaction Stream (Emojis floating upward) -->
+  <div id="floating-reactions-container" class="floating-reactions-container"></div>
 
   <script type="module" src="./src/main.js"></script>
 </body>

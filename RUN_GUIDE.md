@@ -213,18 +213,32 @@ git push origin main
 ### Keyboard Shortcuts
 | Key | Function |
 | :--- | :--- |
-| <kbd>1</kbd> or <kbd>S</kbd> | Switch to **Simplex Method (Continuous LP)** |
-| <kbd>2</kbd> or <kbd>C</kbd> | Switch to **Gomory's Cutting Plane (ILP)** |
-| <kbd>→</kbd> or <kbd>Space</kbd> or <kbd>Enter</kbd> | **Next Step** |
-| <kbd>←</kbd> or <kbd>Backspace</kbd> | **Previous Step** |
-| <kbd>R</kbd> | **Reset to State 0** (Preserves active mode) |
-| <kbd>G</kbd> or <kbd>I</kbd> | Toggle **2D Inequality Graph Modal** |
+| <kbd>1</kbd> | Switch to **H.W. 1: Pure Gomory Cutting Plane** |
+| <kbd>2</kbd> | Switch to **H.W. 2: Mixed Integer Algorithm** |
+| <kbd>→</kbd> / <kbd>Space</kbd> / <kbd>Enter</kbd> | **Next Step / Advance Tableau** |
+| <kbd>←</kbd> / <kbd>Backspace</kbd> | **Previous Step / Revert** |
+| <kbd>R</kbd> | **Reset to Tableau 1** (Preserves active mode) |
+| <kbd>C</kbd> | Toggle **"What Changed?" Comparison Modal** |
+| <kbd>Q</kbd> | Toggle **Audience Live Roll Call & Quiz** |
+| <kbd>B</kbd> | Toggle **Audience Reactions & Soundboard Bar** |
+| <kbd>3</kbd> | **Audience Applause & Cheers** SFX + Floating Reaction |
+| <kbd>4</kbd> | **Suspense Drumroll** SFX + Floating Reaction |
+| <kbd>5</kbd> | **Game Show Wrong Buzzer** SFX + Floating Reaction |
+| <kbd>6</kbd> | **Eureka Insight Chime** SFX + Floating Reaction |
+| <kbd>7</kbd> | **Cutting Plane Laser Blast** SFX + Floating Reaction |
+| <kbd>8</kbd> | **Confetti Shower** SFX + Floating Reaction |
+| <kbd>E</kbd> | **3D Polytope Exploded Disassembly** (Toggles normal vector separation) |
+| <kbd>L</kbd> | **Execute Laser Slice Cutting Plane FX** |
+| <kbd>O</kbd> | Toggle **3D Auto-Rotation** |
+| <kbd>[</kbd> / <kbd>]</kbd> | Decrease / Increase Dynamic Font Scale |
+| <kbd>0</kbd> | Reset Font Scale to 100% |
+| <kbd>A</kbd> | Toggle **Projector Aspect Ratio** (16:9 vs 1:1 Square) |
 | <kbd>T</kbd> | Top-Down 2D Camera View |
 | <kbd>P</kbd> | Default Perspective Camera View |
 | <kbd>F</kbd> | Toggle Fullscreen |
 | <kbd>M</kbd> | Toggle Procedural Sound Effects (SFX) |
 | <kbd>?</kbd> or <kbd>H</kbd> | Open Keyboard Shortcuts Cheat Sheet |
-| <kbd>Esc</kbd> | Close Active Modals |
+| <kbd>Esc</kbd> | Close Active Modals / Soundboard |
 
 ---
 
